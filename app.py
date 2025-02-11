@@ -5,7 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # MariaDB-Datenbank konfigurieren (Passe die Zugangsdaten entsprechend an)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mariadb://root:elsterweg23@mariadb-container:3306/Wetterdaten'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://root:DEIN_PASSWORT@mariadb-container:3306/Wetterdaten'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # SQLAlchemy initialisieren
@@ -13,18 +13,15 @@ db = SQLAlchemy(app)
 
 # Datenbankmodell anpassen
 class Wetterdaten(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # Automatische ID
-    sensor_id = db.Column(db.String(50), nullable=False)  # Sensor-ID
-    temperatur = db.Column(db.Float, nullable=False)  # Temperatur
-    luftfeuchte = db.Column(db.Float, nullable=False)  # Luftfeuchte
-    drinnen = db.Column(db.Boolean, nullable=False)  # Drinnen (True) oder Draußen (False)
-    ort = db.Column(db.String(100), nullable=False)  # Standort, z.B. Emsbüren
-    datum = db.Column(db.Date, nullable=False)  # Datum
-    uhrzeit = db.Column(db.Time, nullable=False)  # Uhrzeit
-
-# Datenbank erstellen (falls noch nicht vorhanden)
-with app.app_context():
-    db.create_all()
+    __tablename__ = 'wetterdaten'
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_id = db.Column(db.String(50), nullable=False)
+    temperatur = db.Column(db.Float, nullable=False)
+    luftfeuchte = db.Column(db.Float, nullable=False)
+    drinnen = db.Column(db.Boolean, nullable=False)
+    standort = db.Column(db.String(100), nullable=False)
+    datum = db.Column(db.Date, nullable=False)
+    uhrzeit = db.Column(db.Time, nullable=False)
 
 # Route: Daten empfangen und speichern
 @app.route('/api/data', methods=['POST'])
@@ -38,9 +35,13 @@ def receive_data():
     temperatur = data.get('temperatur')
     luftfeuchte = data.get('luftfeuchte')
     drinnen = data.get('drinnen')
-    ort = data.get('ort')
+    standort = data.get('standort')
     datum = data.get('datum')  # Format: YYYY-MM-DD
     uhrzeit = data.get('uhrzeit')  # Format: HH:MM:SS
+
+    # Prüfen, ob alle Felder vorhanden sind
+    if not all([sensor_id, temperatur, luftfeuchte, drinnen is not None, standort, datum, uhrzeit]):
+        return jsonify({"error": "Fehlende Felder in der Anfrage"}), 400
 
     # Datum und Uhrzeit in DateTime-Objekte umwandeln
     try:
@@ -55,7 +56,7 @@ def receive_data():
         temperatur=temperatur,
         luftfeuchte=luftfeuchte,
         drinnen=drinnen,
-        ort=ort,
+        standort=standort,
         datum=datum_obj,
         uhrzeit=uhrzeit_obj
     )
@@ -75,7 +76,7 @@ def get_data():
             "temperatur": d.temperatur,
             "luftfeuchte": d.luftfeuchte,
             "drinnen": d.drinnen,
-            "ort": d.ort,
+            "standort": d.standort,
             "datum": d.datum.strftime('%Y-%m-%d'),
             "uhrzeit": d.uhrzeit.strftime('%H:%M:%S')
         } for d in alle_daten
