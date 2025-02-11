@@ -14,7 +14,10 @@ WORKDIR /app
 # Kopiere die requirements.txt in den Container
 COPY requirements.txt requirements.txt
 
-# Installiere die Abhängigkeiten
+# Installiere packaging vorab
+RUN pip install --no-cache-dir packaging
+
+# Installiere alle weiteren Abhängigkeiten
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere den restlichen Code in den Container
