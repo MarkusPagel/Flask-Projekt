@@ -5,7 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # MariaDB-Datenbank konfigurieren (Passe die Zugangsdaten entsprechend an)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mariadb://user:password@db_host:3306/Wetterdaten'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mariadb://root:elsterweg23@mariadb-container:3306/Wetterdaten'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # SQLAlchemy initialisieren
