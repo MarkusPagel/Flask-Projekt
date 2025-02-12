@@ -76,20 +76,23 @@ def receive_data():
 
 # Route: Alle gespeicherten Daten abrufen
 @app.route('/api/data', methods=['GET'])
+
+
 def get_data():
     alle_daten = Wetterdaten.query.all()
     result = [
-        {
-            "id": d.id,
-            "sensor_id": d.sensor_id,
-            "temperatur": d.temperatur,
-            "luftfeuchte": d.luftfeuchte,
-            "drinnen": d.drinnen,
-            "standort": d.standort,
-            "datum": d.datum.strftime('%Y-%m-%d'),
-            "uhrzeit": d.uhrzeit.strftime('%H:%M:%S')
-        } for d in alle_daten
-    ]
+    {
+        "id": d.id,
+        "sensor_id": d.sensor_id,
+        "temperatur": d.temperatur,
+        "luftfeuchte": d.luftfeuchte,
+        "drinnen": d.drinnen,
+        "standort": d.standort,
+        "datum": d.datum if isinstance(d.datum, str) else d.datum.strftime('%Y-%m-%d'),
+        "uhrzeit": d.uhrzeit if isinstance(d.uhrzeit, str) else d.uhrzeit.strftime('%H:%M:%S')
+    } for d in alle_daten
+]
+
     return jsonify(result), 200
 
 if __name__ == '__main__':
