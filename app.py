@@ -1,14 +1,23 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+# .env-Datei laden
+load_dotenv()
+
+# Umgebungsvariablen aus der .env-Datei abrufen
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_USER = os.getenv('DB_USER', 'root')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+DB_NAME = os.getenv('DB_NAME', 'Wetterdaten')
 
 app = Flask(__name__)
 
-# MariaDB-Datenbank konfigurieren (Passe die Zugangsdaten entsprechend an)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://root:DEIN_PASSWORT@mariadb-container:3306/Wetterdaten'
+# SQLAlchemy-Datenbankkonfiguration mit Umgebungsvariablen
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mariadb+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:3306/{DB_NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# SQLAlchemy initialisieren
 db = SQLAlchemy(app)
 
 # Datenbankmodell anpassen
