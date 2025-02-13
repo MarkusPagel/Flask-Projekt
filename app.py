@@ -35,30 +35,23 @@ class Wetterdaten(db.Model):
 
 # Route: Daten empfangen und speichern
 @app.route('/api/data', methods=['POST'])
+@app.route('/api/data', methods=['POST'])
 def receive_data():
-    data = request.get_json()
-    if not data:
+    raw_data = request.get_data().decode("utf-8")  # Rohe Anfrage ausgeben
+    print(f"📩 Empfangene rohe Daten: {raw_data}")  # Debug-Log
+
+    try:
+        json_data = request.get_json()
+        print(f"📜 Geparstes JSON: {json_data}")  # Debug-Log für das JSON
+    except Exception as e:
+        print(f"⚠️ JSON-Parsing-Fehler: {str(e)}")
+        return jsonify({"error": "Ungültiges JSON-Format"}), 400
+
+    if not json_data:
         return jsonify({"error": "Keine Daten empfangen"}), 400
 
-    # Daten aus JSON extrahieren
-    sensor_id = data.get('sensor_id')
-    temperatur = data.get('temperatur')
-    luftfeuchte = data.get('luftfeuchte')
-    drinnen = data.get('drinnen')
-    standort = data.get('standort')
-    datum = data.get('datum')  # Format: YYYY-MM-DD
-    uhrzeit = data.get('uhrzeit')  # Format: HH:MM:SS
+    return jsonify({"message": "Daten erfolgreich erhalten"}), 201
 
-    # Prüfen, ob alle Felder vorhanden sind
-    if not all([sensor_id, temperatur, luftfeuchte, drinnen is not None, standort, datum, uhrzeit]):
-        return jsonify({"error": "Fehlende Felder in der Anfrage"}), 400
-
-    # Datum und Uhrzeit in DateTime-Objekte umwandeln
-    try:
-        datum_obj = datetime.strptime(datum, '%Y-%m-%d').date()
-        uhrzeit_obj = datetime.strptime(uhrzeit, '%H:%M:%S').time()
-    except ValueError:
-        return jsonify({"error": "Ungültiges Datum- oder Uhrzeitformat"}), 400
 
     # Daten in der Datenbank speichern
     neuer_eintrag = Wetterdaten(
