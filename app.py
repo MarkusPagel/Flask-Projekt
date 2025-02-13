@@ -36,11 +36,21 @@ class Wetterdaten(db.Model):
 # Route: Daten empfangen und speichern
 @app.route('/api/data', methods=['POST'])
 @app.route('/api/data', methods=['POST'])
+@app.route('/api/data', methods=['POST'])
 def receive_data():
-    data = request.get_json()
-    print("Empfangene Daten:", data)  # Debugging-Log
-    if not data:
+    data = request.get_data()  # Zeigt die rohe JSON-Anfrage
+    print("📩 Empfangene rohe Daten:", data)  # Debugging in den Logs
+
+    try:
+        json_data = request.get_json()
+        print("📜 Geparstes JSON:", json_data)  # Zeigt das verarbeitete JSON
+    except Exception as e:
+        print("⚠️ JSON-Parsing-Fehler:", str(e))
+        return jsonify({"error": "Ungültiges JSON-Format"}), 400
+
+    if not json_data:
         return jsonify({"error": "Keine Daten empfangen"}), 400
+
 
 
 # Route: Alle gespeicherten Daten abrufen
