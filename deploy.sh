@@ -28,7 +28,7 @@ docker rm flask-app || echo "ℹ️ Kein alter Container zum Löschen gefunden."
 
 # Neuen Container starten mit Netzwerk und Umgebungsvariablen
 echo "🚀 Starte neuen Container mit Netzwerk und .env-Datei..."
-docker run --env-file .env --network flask-network -d --name flask-app -p 5000:5000 flask-app || { echo "❌ Fehler beim Starten des Containers!"; exit 1; }
+docker run --env-file .env --network flask-network -d --name flask-app -p 80:80 flask-app || { echo "❌ Fehler beim Starten des Containers!"; exit 1; }
 
 echo "✅ Auto-Deployment abgeschlossen!"
 
