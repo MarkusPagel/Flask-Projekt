@@ -11,6 +11,7 @@ body {
 .container {
     max-width: 800px;
     margin: 0 auto;
+    width: 80%;
 }
 
 /* Titel zentrieren */
@@ -28,6 +29,7 @@ body {
     padding: 10px;
     background-color: #222;
     border-radius: 10px;
+    margin-top: 20px;
 }
 
 /* Linke Seite (Dropdowns) */
@@ -48,9 +50,10 @@ body {
     background-color: blue;
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 10px 20px;
     border-radius: 10px;
     cursor: pointer;
+    font-size: 16px;
 }
 
 .btn:hover {
@@ -64,4 +67,5 @@ body {
     border: none;
     background-color: #333;
     color: white;
+    font-size: 16px;
 }
