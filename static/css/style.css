@@ -1,12 +1,63 @@
 body {
-    background-color: #121212;
-    color: #ffffff;
+    font-family: Arial, sans-serif;
+    background-color: #111;
+    color: white;
+    text-align: center;
+    padding: 20px;
 }
 
-h1 {
-    color: #ffffff;
+/* Container für den Inhalt */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-canvas {
-    background-color: #1e1e1e;
+/* Titel zentrieren */
+.title {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+/* Obere Leiste für Auswahl & Buttons */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #222;
+    border-radius: 10px;
+}
+
+/* Linke Seite (Dropdowns) */
+.left {
+    display: flex;
+    gap: 10px;
+}
+
+/* Rechte Seite (Buttons) */
+.right {
+    display: flex;
+    gap: 10px;
+}
+
+/* Styling für Buttons */
+.btn {
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: darkblue;
+}
+
+/* Styling für Inputs */
+.input {
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
 }

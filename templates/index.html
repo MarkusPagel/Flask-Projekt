@@ -4,66 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wetterdaten</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="container">
+        <!-- Titel -->
+        <h1 class="title">Wetterdaten</h1>
 
-    <header>
-        <h1>Wetterdaten</h1>
-    </header>
-
-    <div class="filter-container">
-        <label for="date">Datum:</label>
-        <input type="date" id="date">
-
-        <label for="location">Ort:</label>
-        <select id="location">
-            <option value="alle">Alle</option>
-            <option value="Wohnzimmer">Wohnzimmer</option>
-            <option value="Balkon">Balkon</option>
-        </select>
-
-        <label for="time-range">Uhrzeit:</label>
-        <select id="time-range">
-            <option value="00:00-23:59">Ganzer Tag</option>
-            <option value="00:00-06:00">Nacht (00:00 - 06:00)</option>
-            <option value="06:00-12:00">Morgen (06:00 - 12:00)</option>
-            <option value="12:00-18:00">Nachmittag (12:00 - 18:00)</option>
-            <option value="18:00-00:00">Abend (18:00 - 00:00)</option>
-        </select>
-
-        <button id="apply-filters">Anwenden</button>
+        <!-- Obere Leiste mit Dropdowns & Buttons -->
+        <div class="top-bar">
+            <div class="left">
+                <input type="date" class="input">
+                <select class="input">
+                    <option>Ort wählen</option>
+                    <option>Berlin</option>
+                    <option>Hamburg</option>
+                </select>
+                <select class="input">
+                    <option>Uhrzeit</option>
+                    <option>Ganzer Tag</option>
+                    <option>Morgen</option>
+                </select>
+            </div>
+            <div class="right">
+                <button class="btn">Tabelle</button>
+                <button class="btn">Diagramm</button>
+            </div>
+        </div>
     </div>
-
-    <div class="view-toggle">
-        <button id="btn-chart" class="active">Diagramm</button>
-        <button id="btn-table">Tabelle</button>
-    </div>
-
-    <div id="chart-container">
-        <canvas id="weatherChart"></canvas>
-    </div>
-
-    <div id="table-container" style="display: none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Datum</th>
-                    <th>Uhrzeit</th>
-                    <th>Ort</th>
-                    <th>Temperatur (°C)</th>
-                    <th>Luftfeuchte (%)</th>
-                    <th>Luftdruck (hPa)</th>
-                    <th>Luftqualität (VOC)</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                <!-- Daten werden hier eingefügt -->
-            </tbody>
-        </table>
-    </div>
-
 </body>
 </html>
