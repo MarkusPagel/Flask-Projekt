@@ -14,7 +14,9 @@
         <!-- Obere Leiste mit Dropdowns & Buttons -->
         <div class="top-bar">
             <div class="left">
-                <input type="date" class="input">
+                <select id="date-dropdown" class="input">
+                    <option>Datum wählen</option>
+                </select>
                 <select class="input">
                     <option>Ort wählen</option>
                     <option>Berlin</option>
@@ -32,5 +34,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Später füllt das Skript den Datums-Dropdown mit Werten
+        document.addEventListener("DOMContentLoaded", function() {
+            let dateDropdown = document.getElementById("date-dropdown");
+            let today = new Date();
+            
+            for (let i = 0; i < 7; i++) { // Letzte 7 Tage hinzufügen
+                let date = new Date();
+                date.setDate(today.getDate() - i);
+                let formattedDate = date.toISOString().split("T")[0]; // YYYY-MM-DD
+                let option = document.createElement("option");
+                option.text = formattedDate;
+                option.value = formattedDate;
+                dateDropdown.appendChild(option);
+            }
+        });
+    </script>
 </body>
 </html>

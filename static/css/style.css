@@ -1,3 +1,4 @@
+/* Darkmode */
 body {
     font-family: Arial, sans-serif;
     background-color: #111;
@@ -39,6 +40,7 @@ body {
 .right {
     display: flex;
     gap: 10px;
+    margin-left: auto; /* Drückt Buttons nach rechts */
 }
 
 /* Styling für Buttons */
@@ -60,4 +62,6 @@ body {
     padding: 5px;
     border-radius: 5px;
     border: none;
+    background-color: #333;
+    color: white;
 }
