@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
 
@@ -21,19 +21,28 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+class Sensoren(db.Model):
+    __tablename__ = 'sensoren'
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_code = db.Column(db.String(50), unique=True, nullable=False)  # Z. B. "A1"
+    standort = db.Column(db.String(100), nullable=False)
+    aktiv = db.Column(db.Boolean, default=True)  # Standard: Sensor ist aktiv
+
+
 # Datenbankmodell mit neuen Spalten für pressure & gas
 class Wetterdaten(db.Model):
     __tablename__ = 'wetterdaten'
     id = db.Column(db.Integer, primary_key=True)
-    sensor_id = db.Column(db.String(50), nullable=False)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensoren.id'), nullable=False)
     temperatur = db.Column(db.Float, nullable=False)
     luftfeuchte = db.Column(db.Float, nullable=False)
-    pressure = db.Column(db.Float, nullable=True)  # Neuer Wert
-    gas = db.Column(db.Float, nullable=True)  # Neuer Wert
-    drinnen = db.Column(db.Boolean, nullable=False)
-    standort = db.Column(db.String(100), nullable=False)
+    pressure = db.Column(db.Float, nullable=True)
+    gas = db.Column(db.Float, nullable=True)
     datum = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
     uhrzeit = db.Column(db.Time, nullable=False, default=datetime.utcnow().time)
+
+    sensor = db.relationship('Sensoren', backref=db.backref('messungen', lazy=True))
+
 
 # Route für die Webseite
 @app.route('/')
@@ -62,34 +71,35 @@ def get_data():
 
 # API: Wetterdaten empfangen und speichern
 @app.route('/api/data', methods=['POST'])
+@app.route('/api/data', methods=['POST'])
 def receive_data():
     data = request.get_json()
     if not data:
         return jsonify({"error": "Keine Daten empfangen"}), 400
 
-    # Werte aus JSON extrahieren
-    sensor_id = data.get('sensor')
+    sensor_code = data.get('sensor')  # Der Code, z. B. "A1"
     temperatur = data.get('temp')
     luftfeuchte = data.get('humid')
     pressure = data.get('pressure')
     gas = data.get('gas')
-    drinnen = 1 if data.get('mode') == "Inside" else 0
-    standort = data.get('standort', 'Unknown')
+
+    # Sensor-ID aus der Datenbank holen oder neuen Sensor anlegen
+    sensor = Sensoren.query.filter_by(sensor_code=sensor_code).first()
+    if not sensor:
+        return jsonify({"error": "Sensor nicht gefunden"}), 400
 
     # Aktuelles Server-Datum & Uhrzeit
     now = datetime.utcnow()
     datum = now.date()
     uhrzeit = now.time()
 
-    # Daten in der Datenbank speichern
+    # Neue Messung speichern
     neuer_eintrag = Wetterdaten(
-        sensor_id=sensor_id,
+        sensor_id=sensor.id,
         temperatur=temperatur,
         luftfeuchte=luftfeuchte,
         pressure=pressure,
         gas=gas,
-        drinnen=drinnen,
-        standort=standort,
         datum=datum,
         uhrzeit=uhrzeit
     )
@@ -97,6 +107,8 @@ def receive_data():
     db.session.commit()
 
     return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
