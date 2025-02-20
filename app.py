@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timedelta
+from datetime import datetime
+import pytz
 from dotenv import load_dotenv
 import os
 
@@ -28,7 +29,6 @@ class Sensoren(db.Model):
     standort = db.Column(db.String(100), nullable=False)
     aktiv = db.Column(db.Boolean, default=True)  # Standard: Sensor ist aktiv
 
-
 # Datenbankmodell mit neuen Spalten für pressure & gas
 class Wetterdaten(db.Model):
     __tablename__ = 'wetterdaten'
@@ -40,13 +40,11 @@ class Wetterdaten(db.Model):
     gas = db.Column(db.Float, nullable=True)  # Darf NULL sein
     drinnen = db.Column(db.Boolean, nullable=False)  # tinyint(1) → Boolean
     standort = db.Column(db.String(100), nullable=False)
-    datum = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
-    uhrzeit = db.Column(db.Time, nullable=False, default=datetime.utcnow().time)
+    datum = db.Column(db.Date, nullable=False)
+    uhrzeit = db.Column(db.Time, nullable=False)
 
     # Beziehung zur Sensortabelle
     sensor = db.relationship('Sensoren', backref=db.backref('messungen', lazy=True))
-
-
 
 # Route für die Webseite
 @app.route('/')
@@ -95,8 +93,9 @@ def receive_data():
     # Standort aus der Sensortabelle holen
     standort = sensor.standort  # Speichert den Standort zum Zeitpunkt der Messung
 
-    # Aktuelles Server-Datum & Uhrzeit
-    now = datetime.utcnow()
+    # Aktuelles Server-Datum & Uhrzeit mit korrekter Zeitzone
+    berlin_tz = pytz.timezone('Europe/Berlin')
+    now = datetime.now(berlin_tz)
     datum = now.date()
     uhrzeit = now.time()
 
@@ -116,9 +115,6 @@ def receive_data():
     db.session.commit()
 
     return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
-
-
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
