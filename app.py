@@ -98,7 +98,7 @@ def receive_data():
     # Aktuelles Server-Datum & Uhrzeit
     now = datetime.utcnow()
     datum = now.date()
-    uhrzeit = now.time() + datetime.timedelta(hours=1)  # Zeitzone: MEZ
+    uhrzeit = now.time()
 
     # Daten in die Datenbank speichern
     neuer_eintrag = Wetterdaten(
