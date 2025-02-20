@@ -33,15 +33,19 @@ class Sensoren(db.Model):
 class Wetterdaten(db.Model):
     __tablename__ = 'wetterdaten'
     id = db.Column(db.Integer, primary_key=True)
-    sensor_id = db.Column(db.Integer, db.ForeignKey('sensoren.id'), nullable=False)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensoren.id'), nullable=True)  # Foreign Key zu sensoren
     temperatur = db.Column(db.Float, nullable=False)
     luftfeuchte = db.Column(db.Float, nullable=False)
-    pressure = db.Column(db.Float, nullable=True)
-    gas = db.Column(db.Float, nullable=True)
+    pressure = db.Column(db.Float, nullable=True)  # Darf NULL sein
+    gas = db.Column(db.Float, nullable=True)  # Darf NULL sein
+    drinnen = db.Column(db.Boolean, nullable=False)  # tinyint(1) → Boolean
+    standort = db.Column(db.String(100), nullable=False)
     datum = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
     uhrzeit = db.Column(db.Time, nullable=False, default=datetime.utcnow().time)
 
+    # Beziehung zur Sensortabelle
     sensor = db.relationship('Sensoren', backref=db.backref('messungen', lazy=True))
+
 
 
 # Route für die Webseite
