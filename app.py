@@ -71,7 +71,6 @@ def get_data():
 
 # API: Wetterdaten empfangen und speichern
 @app.route('/api/data', methods=['POST'])
-@app.route('/api/data', methods=['POST'])
 def receive_data():
     data = request.get_json()
     if not data:
@@ -82,24 +81,30 @@ def receive_data():
     luftfeuchte = data.get('humid')
     pressure = data.get('pressure')
     gas = data.get('gas')
+    drinnen = 1 if data.get('mode') == "Inside" else 0
 
-    # Sensor-ID aus der Datenbank holen oder neuen Sensor anlegen
+    # Sensor in der Datenbank suchen
     sensor = Sensoren.query.filter_by(sensor_code=sensor_code).first()
     if not sensor:
-        return jsonify({"error": "Sensor nicht gefunden"}), 400
+        return jsonify({"error": f"Sensor {sensor_code} nicht gefunden"}), 400
+
+    # Standort aus der Sensortabelle holen
+    standort = sensor.standort  # Speichert den Standort zum Zeitpunkt der Messung
 
     # Aktuelles Server-Datum & Uhrzeit
     now = datetime.utcnow()
     datum = now.date()
     uhrzeit = now.time()
 
-    # Neue Messung speichern
+    # Daten in die Datenbank speichern
     neuer_eintrag = Wetterdaten(
         sensor_id=sensor.id,
         temperatur=temperatur,
         luftfeuchte=luftfeuchte,
         pressure=pressure,
         gas=gas,
+        drinnen=drinnen,
+        standort=standort,  # Hier wird der Standort gespeichert
         datum=datum,
         uhrzeit=uhrzeit
     )
@@ -107,6 +112,7 @@ def receive_data():
     db.session.commit()
 
     return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
+
 
 
 
