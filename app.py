@@ -21,36 +21,28 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Datenbankmodell
+# Datenbankmodell mit neuen Spalten für pressure & gas
 class Wetterdaten(db.Model):
     __tablename__ = 'wetterdaten'
     id = db.Column(db.Integer, primary_key=True)
     sensor_id = db.Column(db.String(50), nullable=False)
     temperatur = db.Column(db.Float, nullable=False)
     luftfeuchte = db.Column(db.Float, nullable=False)
+    pressure = db.Column(db.Float, nullable=True)  # Neuer Wert
+    gas = db.Column(db.Float, nullable=True)  # Neuer Wert
     drinnen = db.Column(db.Boolean, nullable=False)
     standort = db.Column(db.String(100), nullable=False)
-    datum = db.Column(db.Date, nullable=False)
-    uhrzeit = db.Column(db.Time, nullable=False)
+    datum = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
+    uhrzeit = db.Column(db.Time, nullable=False, default=datetime.utcnow().time)
 
 # Route für die Webseite
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# API gibt entweder Testdaten oder echte Daten zurück
+# API: Alle gespeicherten Daten abrufen
 @app.route('/api/data', methods=['GET'])
 def get_data():
-    # Falls du lokal entwickelst, nutze Testdaten
-    if "localhost" in request.host:
-        test_daten = [
-            {"id": 1, "sensor_id": "A1", "temperatur": 22.5, "datum": "2024-02-13", "uhrzeit": "15:00:00"},
-            {"id": 2, "sensor_id": "B2", "temperatur": 19.8, "datum": "2024-02-13", "uhrzeit": "15:05:00"},
-            {"id": 3, "sensor_id": "C3", "temperatur": 21.3, "datum": "2024-02-13", "uhrzeit": "15:10:00"}
-        ]
-        return jsonify(test_daten), 200
-
-    # Falls Flask auf dem Server läuft, nutze echte Daten
     alle_daten = Wetterdaten.query.all()
     result = [
         {
@@ -58,6 +50,8 @@ def get_data():
             "sensor_id": d.sensor_id,
             "temperatur": d.temperatur,
             "luftfeuchte": d.luftfeuchte,
+            "pressure": d.pressure,
+            "gas": d.gas,
             "drinnen": d.drinnen,
             "standort": d.standort,
             "datum": d.datum.strftime('%Y-%m-%d'),
@@ -65,6 +59,44 @@ def get_data():
         } for d in alle_daten
     ]
     return jsonify(result), 200
+
+# API: Wetterdaten empfangen und speichern
+@app.route('/api/data', methods=['POST'])
+def receive_data():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Keine Daten empfangen"}), 400
+
+    # Werte aus JSON extrahieren
+    sensor_id = data.get('sensor')
+    temperatur = data.get('temp')
+    luftfeuchte = data.get('humid')
+    pressure = data.get('pressure')
+    gas = data.get('gas')
+    drinnen = 1 if data.get('mode') == "Inside" else 0
+    standort = data.get('standort', 'Unknown')
+
+    # Aktuelles Server-Datum & Uhrzeit
+    now = datetime.utcnow()
+    datum = now.date()
+    uhrzeit = now.time()
+
+    # Daten in der Datenbank speichern
+    neuer_eintrag = Wetterdaten(
+        sensor_id=sensor_id,
+        temperatur=temperatur,
+        luftfeuchte=luftfeuchte,
+        pressure=pressure,
+        gas=gas,
+        drinnen=drinnen,
+        standort=standort,
+        datum=datum,
+        uhrzeit=uhrzeit
+    )
+    db.session.add(neuer_eintrag)
+    db.session.commit()
+
+    return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
