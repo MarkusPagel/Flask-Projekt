@@ -116,5 +116,12 @@ def receive_data():
 
     return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
 
+@app.route('/api/standorte')
+def get_standorte():
+    standorte = db.session.query(Wetterdaten.standort).distinct().all()
+    standort_liste = [s[0] for s in standorte]
+    return jsonify(standort_liste)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
