@@ -1,6 +1,11 @@
 async function fetchData() {
-    const response = await fetch('/api/data');
-    const data = await response.json();
+    let data;
+
+    if (window.location.hostname === "localhost") {
+
+        const response = await fetch('/api/data');
+        data = await response.json();
+    }
 
     const labels = data.map(d => `${d.datum} ${d.uhrzeit}`);
     const values = data.map(d => d.temperatur);
