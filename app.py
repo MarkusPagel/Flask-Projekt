@@ -116,5 +116,12 @@ def receive_data():
 
     return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
 
+@app.route('/api/data/all')
+def get_all_data():
+    cursor.execute("SELECT * FROM messwerte ORDER BY timestamp DESC LIMIT 100")
+    data = cursor.fetchall()
+    return jsonify(data)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
