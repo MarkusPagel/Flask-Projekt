@@ -1,12 +1,35 @@
-async function fetchData() {
-    const response = await fetch('/api/data');
-    const data = await response.json();
+document.addEventListener('DOMContentLoaded', () => {
+    const graphContainer = document.getElementById('graph-container');
+    const tableContainer = document.getElementById('table-container');
+    const tableButton = document.getElementById('show-table');
+    const chartButton = document.getElementById('show-graph');
+    const modeSelect = document.getElementById('mode-select');
+    const standortSelect = document.getElementById('standort-select');
+    const datumSelect = document.getElementById('datum-select');
 
-    console.log("Daten vom Server:", data);
-}
+    // 🟢 Sicherstellen, dass alle Dropdowns existieren
+    if (modeSelect && standortSelect && datumSelect) {
+        modeSelect.addEventListener('change', updateDateFilter);
+        standortSelect.addEventListener('change', updateDateFilter);
+        datumSelect.addEventListener('change', loadTableData);
+    }
 
-fetchData();
+    // 🟢 Sicherstellen, dass die Buttons existieren
+    if (tableButton && chartButton) {
+        tableButton.addEventListener('click', () => {
+            graphContainer.style.display = 'none';
+            tableContainer.style.display = 'block';
+            loadTableData();
+        });
 
+        chartButton.addEventListener('click', () => {
+            graphContainer.style.display = 'grid';
+            tableContainer.style.display = 'none';
+        });
+    }
+});
+
+// 🟢 Datumsauswahl basierend auf Drinnen/Draußen & Ort einschränken
 async function updateDateFilter() {
     const drinnen = document.getElementById('mode-select').value;
     const standort = document.getElementById('standort-select').value;
@@ -19,7 +42,7 @@ async function updateDateFilter() {
     const response = await fetch(url);
     const data = await response.json();
 
-    // Datum-Dropdown aktualisieren
+    // 🟢 Datum-Dropdown aktualisieren
     const datumSelect = document.getElementById('datum-select');
     datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
@@ -30,39 +53,13 @@ async function updateDateFilter() {
     });
 }
 
-// Events setzen: Wenn Drinnen/Draußen oder der Ort geändert wird, aktualisiere die Datumsauswahl
-document.getElementById('mode-select').addEventListener('change', updateDateFilter);
-document.getElementById('standort-select').addEventListener('change', updateDateFilter);
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    const graphContainer = document.getElementById('graph-container');
-    const tableContainer = document.getElementById('table-container');
-    const tableButton = document.getElementById('show-table');  // Hier direkt das Element holen
-    const chartButton = document.getElementById('show-graph');
-
-    if (tableButton && chartButton) {  // Sicherstellen, dass die Buttons existieren
-        tableButton.addEventListener('click', () => {
-            graphContainer.style.display = 'none';
-            tableContainer.style.display = 'block';
-            loadTableData();  // Jetzt die Tabelle mit Daten füllen!
-        });
-
-        chartButton.addEventListener('click', () => {
-            graphContainer.style.display = 'grid';
-            tableContainer.style.display = 'none';
-        });
-    }
-});
-
-
-
+// 🟢 Tabelle mit Daten füllen
 async function loadTableData() {
-    const datumFilter = document.getElementById('datum-select').value;  // Gewähltes Datum abrufen
+    const datumFilter = document.getElementById('datum-select').value;  
     let url = '/api/data';
-    
+
     if (datumFilter) {
-        url += `?datum=${datumFilter}`;  // Filter an API-URL anhängen
+        url += `?datum=${datumFilter}`;
     }
 
     const response = await fetch(url);
@@ -73,7 +70,6 @@ async function loadTableData() {
 
     data.forEach(entry => {
         const row = document.createElement('tr');
-
         row.innerHTML = `
             <td>${entry.datum}</td>
             <td>${entry.uhrzeit}</td>
@@ -81,23 +77,6 @@ async function loadTableData() {
             <td>${entry.temperatur} °C</td>
             <td>${entry.luftfeuchte} %</td>
         `;
-
         tableBody.appendChild(row);
     });
 }
-
-// Wenn das Datum geändert wird, wird die Tabelle neu geladen
-document.getElementById('datum-select').addEventListener('change', () => {
-    loadTableData();
-});
-
-// Falls die Tabelle geöffnet wird, soll sie direkt mit dem aktuellen Filter geladen werden
-document.getElementById('show-table').addEventListener('click', () => {
-    loadTableData();
-});
-
-
-// Diese Funktion wird aufgerufen, wenn der Benutzer auf "Tabelle" klickt
-document.getElementById('show-table').addEventListener('click', () => {
-    loadTableData();
-});
