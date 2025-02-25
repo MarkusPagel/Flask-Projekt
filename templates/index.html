@@ -17,7 +17,7 @@
 
         .container {
             width: 95%;
-            max-width: 1200px; /* Mehr Platz nutzen */
+            max-width: 1200px;
             margin: 20px auto;
         }
 
@@ -41,7 +41,7 @@
         }
 
         .right {
-            margin-left: auto; /* Buttons nach rechts schieben */
+            margin-left: auto;
         }
 
         .input, .btn {
@@ -68,8 +68,8 @@
         /* Graphen-Bereich */
         .graph-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 Spalten */
-            grid-template-rows: repeat(2, 1fr); /* 2 Reihen */
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             gap: 20px;
             margin-top: 30px;
             padding: 20px;
@@ -82,15 +82,41 @@
             background-color: #333;
             border-radius: 10px;
             padding: 30px;
-            min-height: 200px; /* Mehr Platz für Graphen */
+            min-height: 200px;
             text-align: center;
             font-size: 18px;
         }
 
-        /* Responsive Anpassung */
+        /* Tabelle */
+        .table-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 15px;
+            width: 100%;
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #333;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid white;
+            text-align: center;
+        }
+
+        th {
+            background-color: #444;
+        }
+
         @media (max-width: 800px) {
             .graph-container {
-                grid-template-columns: 1fr; /* Bei kleinen Bildschirmen 1 Spalte */
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -102,55 +128,49 @@
         <div class="top-bar">
             <div class="left">
                 <select id="datum-select" class="input">
+                    <option>Datum wählen</option>
                 </select>
                 <select id="standort-select" class="input">
+                    <option>Ort wählen</option>
                 </select>
                 <select id="mode-select" class="input">
+                    <option value="">Drinnen/Draußen wählen</option>
                     <option value="1">Drinnen</option>
                     <option value="0">Draußen</option>
-                </select>
-
-                <select id="zeit-von" class="input">
-                    <option>Uhrzeit</option>
-                </select>
-                <select id="zeit-bis" class="input">
-                    <option>Uhrzeit</option>
                 </select>
             </div>
 
             <div class="right">
-                <button class="btn">Tabelle</button>
-                <button class="btn">Diagramm</button>
+                <button class="btn" id="show-table">Tabelle</button>
+                <button class="btn" id="show-graph">Diagramm</button>
             </div>
         </div>
 
         <!-- Graphen Container -->
-        <!-- Graphen Container -->
-<div id="graph-container" class="graph-container">
-    <div class="graph-box">Graph 1</div>
-    <div class="graph-box">Graph 2</div>
-    <div class="graph-box">Graph 3</div>
-    <div class="graph-box">Graph 4</div>
-</div>
+        <div id="graph-container" class="graph-container">
+            <div class="graph-box">Graph 1</div>
+            <div class="graph-box">Graph 2</div>
+            <div class="graph-box">Graph 3</div>
+            <div class="graph-box">Graph 4</div>
+        </div>
 
-<!-- Tabelle Container (anfangs versteckt) -->
-<div id="table-container" class="table-container" style="display: none;">
-    <table>
-        <thead>
-            <tr>
-                <th>Datum</th>
-                <th>Uhrzeit</th>
-                <th>Ort</th>
-                <th>Temperatur</th>
-                <th>Luftfeuchte</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            <!-- Hier kommen die Daten rein -->
-        </tbody>
-    </table>
-</div>
-
+        <!-- Tabelle Container (anfangs versteckt) -->
+        <div id="table-container" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Uhrzeit</th>
+                        <th>Ort</th>
+                        <th>Temperatur</th>
+                        <th>Luftfeuchte</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Hier kommen die Daten rein -->
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
