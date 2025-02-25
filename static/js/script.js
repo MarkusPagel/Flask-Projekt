@@ -40,19 +40,23 @@ loadFilterOptions();
 document.addEventListener('DOMContentLoaded', () => {
     const graphContainer = document.getElementById('graph-container');
     const tableContainer = document.getElementById('table-container');
-    const tableButton = document.querySelector('.btn:nth-child(1)'); // Erster Button = "Tabelle"
-    const chartButton = document.querySelector('.btn:nth-child(2)'); // Zweiter Button = "Diagramm"
+    const tableButton = document.getElementById('show-table');  // Hier direkt das Element holen
+    const chartButton = document.getElementById('show-graph');
 
-    tableButton.addEventListener('click', () => {
-        graphContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
-    });
+    if (tableButton && chartButton) {  // Sicherstellen, dass die Buttons existieren
+        tableButton.addEventListener('click', () => {
+            graphContainer.style.display = 'none';
+            tableContainer.style.display = 'block';
+            loadTableData();  // Jetzt die Tabelle mit Daten füllen!
+        });
 
-    chartButton.addEventListener('click', () => {
-        graphContainer.style.display = 'grid';
-        tableContainer.style.display = 'none';
-    });
+        chartButton.addEventListener('click', () => {
+            graphContainer.style.display = 'grid';
+            tableContainer.style.display = 'none';
+        });
+    }
 });
+
 
 
 async function loadTableData() {
