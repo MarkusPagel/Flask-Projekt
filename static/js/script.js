@@ -58,7 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 async function loadTableData() {
-    const response = await fetch('/api/data');
+    const datumFilter = document.getElementById('datum-select').value;  // Gewähltes Datum abrufen
+    let url = '/api/data';
+    
+    if (datumFilter) {
+        url += `?datum=${datumFilter}`;  // Filter an API-URL anhängen
+    }
+
+    const response = await fetch(url);
     const data = await response.json();
 
     const tableBody = document.getElementById('table-body');
@@ -78,6 +85,17 @@ async function loadTableData() {
         tableBody.appendChild(row);
     });
 }
+
+// Wenn das Datum geändert wird, wird die Tabelle neu geladen
+document.getElementById('datum-select').addEventListener('change', () => {
+    loadTableData();
+});
+
+// Falls die Tabelle geöffnet wird, soll sie direkt mit dem aktuellen Filter geladen werden
+document.getElementById('show-table').addEventListener('click', () => {
+    loadTableData();
+});
+
 
 // Diese Funktion wird aufgerufen, wenn der Benutzer auf "Tabelle" klickt
 document.getElementById('show-table').addEventListener('click', () => {
