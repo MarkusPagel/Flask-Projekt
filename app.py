@@ -117,10 +117,19 @@ def receive_data():
     return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
 
 @app.route('/api/standorte')
-def get_standorte():
+@app.route('/api/filter-options')
+def get_filter_options():
     standorte = db.session.query(Wetterdaten.standort).distinct().all()
-    standort_liste = [s[0] for s in standorte]
-    return jsonify(standort_liste)
+    daten = db.session.query(Wetterdaten.datum).distinct().all()
+    drinnen_draussen = [0, 1]  # 0 = Draußen, 1 = Drinnen
+
+    response = {
+        "standorte": [s[0] for s in standorte],
+        "daten": [d[0].strftime('%Y-%m-%d') for d in daten],
+        "drinnen_draussen": drinnen_draussen
+    }
+    return jsonify(response)
+
 
 
 if __name__ == '__main__':
