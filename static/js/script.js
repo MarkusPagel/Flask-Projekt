@@ -86,14 +86,11 @@ async function loadTableData() {
     });
 }
 
+// Wenn das Datum geändert wird, wird die Tabelle neu geladen
 document.getElementById('datum-select').addEventListener('change', () => {
-    // Falls die Tabelle gerade nicht sichtbar ist, schalte sie ein
-    document.getElementById('graph-container').style.display = 'none';
-    document.getElementById('table-container').style.display = 'block';
-    
-    // Lade die Tabelle direkt mit den gefilterten Daten
     loadTableData();
 });
+
 
 });
 
