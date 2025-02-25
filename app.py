@@ -123,19 +123,30 @@ def receive_data():
 
     return jsonify({"message": "Daten erfolgreich gespeichert"}), 201
 
-@app.route('/api/standorte')
 @app.route('/api/filter-options')
 def get_filter_options():
-    standorte = db.session.query(Wetterdaten.standort).distinct().all()
-    daten = db.session.query(Wetterdaten.datum).distinct().all()
-    drinnen_draussen = [0, 1]  # 0 = Draußen, 1 = Drinnen
+    drinnen_filter = request.args.get('drinnen')  # 0 = Draußen, 1 = Drinnen
+    ort_filter = request.args.get('standort')  # Gewählter Standort
+
+    query = db.session.query(Wetterdaten)
+
+    # Falls der Benutzer eine Auswahl für Drinnen/Draußen getroffen hat
+    if drinnen_filter in ["0", "1"]:
+        query = query.filter(Wetterdaten.drinnen == int(drinnen_filter))
+
+    # Falls der Benutzer einen Ort ausgewählt hat
+    if ort_filter:
+        query = query.filter(Wetterdaten.standort == ort_filter)
+
+    # Alle verfügbaren Tage abrufen, die zu den Filtern passen
+    daten = query.with_entities(Wetterdaten.datum).distinct().all()
 
     response = {
-        "standorte": [s[0] for s in standorte],
-        "daten": [d[0].strftime('%Y-%m-%d') for d in daten],
-        "drinnen_draussen": drinnen_draussen
+        "daten": [d[0].strftime('%Y-%m-%d') for d in daten]
     }
+
     return jsonify(response)
+
 
 
 

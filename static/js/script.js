@@ -7,33 +7,33 @@ async function fetchData() {
 
 fetchData();
 
-async function loadFilterOptions() {
-    const response = await fetch('/api/filter-options');
+async function updateDateFilter() {
+    const drinnen = document.getElementById('mode-select').value;
+    const standort = document.getElementById('standort-select').value;
+
+    let url = `/api/filter-options`;
+    if (drinnen || standort) {
+        url += `?drinnen=${drinnen}&standort=${standort}`;
+    }
+
+    const response = await fetch(url);
     const data = await response.json();
 
-    // Orte einfügen
-    const standortSelect = document.querySelector('#standort-select');
-    data.standorte.forEach(ort => {
-        const option = document.createElement('option');
-        option.value = ort;
-        option.textContent = ort;
-        standortSelect.appendChild(option);
-    });
-
-    // Datum einfügen
-    const datumSelect = document.querySelector('#datum-select');
+    // Datum-Dropdown aktualisieren
+    const datumSelect = document.getElementById('datum-select');
+    datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
         const option = document.createElement('option');
         option.value = datum;
         option.textContent = datum;
         datumSelect.appendChild(option);
     });
-
-    // Drinnen/Draußen bleibt unverändert (ist statisch definiert)
 }
 
-// Funktion starten
-loadFilterOptions();
+// Events setzen: Wenn Drinnen/Draußen oder der Ort geändert wird, aktualisiere die Datumsauswahl
+document.getElementById('mode-select').addEventListener('change', updateDateFilter);
+document.getElementById('standort-select').addEventListener('change', updateDateFilter);
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const graphContainer = document.getElementById('graph-container');
