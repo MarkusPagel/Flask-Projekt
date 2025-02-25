@@ -13,7 +13,6 @@ async function loadFilterOptions() {
 
     // Orte einfügen
     const standortSelect = document.querySelector('#standort-select');
-    standortSelect.innerHTML = '<option value="">Ort wählen</option>';
     data.standorte.forEach(ort => {
         const option = document.createElement('option');
         option.value = ort;
@@ -23,7 +22,6 @@ async function loadFilterOptions() {
 
     // Datum einfügen
     const datumSelect = document.querySelector('#datum-select');
-    datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
         const option = document.createElement('option');
         option.value = datum;
