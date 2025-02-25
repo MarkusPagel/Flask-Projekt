@@ -54,7 +54,13 @@ def home():
 # API: Alle gespeicherten Daten abrufen
 @app.route('/api/data', methods=['GET'])
 def get_data():
-    alle_daten = Wetterdaten.query.all()
+    datum_filter = request.args.get('datum')  # Datum aus der URL abfragen
+    query = Wetterdaten.query
+
+    if datum_filter:
+        query = query.filter(Wetterdaten.datum == datum_filter)  # Nur Daten mit passendem Datum abrufen
+
+    alle_daten = query.all()
     result = [
         {
             "id": d.id,
@@ -70,6 +76,7 @@ def get_data():
         } for d in alle_daten
     ]
     return jsonify(result), 200
+
 
 # API: Wetterdaten empfangen und speichern
 @app.route('/api/data', methods=['POST'])
