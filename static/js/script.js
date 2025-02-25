@@ -91,9 +91,6 @@ document.getElementById('datum-select').addEventListener('change', () => {
     loadTableData();
 });
 
-
-});
-
 // Falls die Tabelle geöffnet wird, soll sie direkt mit dem aktuellen Filter geladen werden
 document.getElementById('show-table').addEventListener('click', () => {
     loadTableData();
@@ -104,8 +101,3 @@ document.getElementById('show-table').addEventListener('click', () => {
 document.getElementById('show-table').addEventListener('click', () => {
     loadTableData();
 });
-
-
-
-
-
