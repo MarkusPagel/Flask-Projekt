@@ -37,6 +37,34 @@ async function loadFilterOptions() {
 // Funktion starten
 loadFilterOptions();
 
+async function loadTableData() {
+    const response = await fetch('/api/data');
+    const data = await response.json();
+
+    const tableBody = document.getElementById('table-body');
+    tableBody.innerHTML = ''; // Vorherige Einträge löschen
+
+    data.forEach(entry => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${entry.datum}</td>
+            <td>${entry.uhrzeit}</td>
+            <td>${entry.standort}</td>
+            <td>${entry.temperatur} °C</td>
+            <td>${entry.luftfeuchte} %</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+// Diese Funktion wird aufgerufen, wenn der Benutzer auf "Tabelle" klickt
+document.getElementById('show-table').addEventListener('click', () => {
+    loadTableData();
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const graphContainer = document.getElementById('graph-container');
     const tableContainer = document.getElementById('table-container');
