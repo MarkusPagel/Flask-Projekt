@@ -37,6 +37,24 @@ async function loadFilterOptions() {
 // Funktion starten
 loadFilterOptions();
 
+document.addEventListener('DOMContentLoaded', () => {
+    const graphContainer = document.getElementById('graph-container');
+    const tableContainer = document.getElementById('table-container');
+    const tableButton = document.querySelector('.btn:nth-child(1)'); // Erster Button = "Tabelle"
+    const chartButton = document.querySelector('.btn:nth-child(2)'); // Zweiter Button = "Diagramm"
+
+    tableButton.addEventListener('click', () => {
+        graphContainer.style.display = 'none';
+        tableContainer.style.display = 'block';
+    });
+
+    chartButton.addEventListener('click', () => {
+        graphContainer.style.display = 'grid';
+        tableContainer.style.display = 'none';
+    });
+});
+
+
 async function loadTableData() {
     const response = await fetch('/api/data');
     const data = await response.json();
@@ -65,22 +83,6 @@ document.getElementById('show-table').addEventListener('click', () => {
 });
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const graphContainer = document.getElementById('graph-container');
-    const tableContainer = document.getElementById('table-container');
-    const tableButton = document.querySelector('.btn:nth-child(1)'); // Erster Button = "Tabelle"
-    const chartButton = document.querySelector('.btn:nth-child(2)'); // Zweiter Button = "Diagramm"
-
-    tableButton.addEventListener('click', () => {
-        graphContainer.style.display = 'none';
-        tableContainer.style.display = 'block';
-    });
-
-    chartButton.addEventListener('click', () => {
-        graphContainer.style.display = 'grid';
-        tableContainer.style.display = 'none';
-    });
-});
 
 
 
