@@ -156,14 +156,6 @@
         <!-- Tabelle Container (anfangs versteckt) -->
         <div id="table-container" class="table-container">
             <table>
-                <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Uhrzeit</th>
-                        <th>Ort</th>
-                        <th>Temperatur</th>
-                        <th>Luftfeuchte</th>
-                        <table>
     <thead>
         <tr>
             <th>Datum</th>
@@ -171,8 +163,8 @@
             <th>Ort</th>
             <th>Temperatur</th>
             <th>Luftfeuchte</th>
-            <th>Luftdruck</th>
-            <th>Luftqualität</th>
+            <th>Luftdruck <span class="info-tooltip" title="Luftdruck in hPa. Normal: ~1013 hPa">ℹ️</span></th>
+            <th>Luftqualität <span class="info-tooltip" title="Gemessene Gaskonzentration in ppm. Höher = schlechtere Luftqualität.">ℹ️</span></th>
         </tr>
     </thead>
     <tbody id="table-body">
@@ -180,12 +172,6 @@
     </tbody>
 </table>
 
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <!-- Hier kommen die Daten rein -->
-                </tbody>
-            </table>
         </div>
     </div>
 </body>
