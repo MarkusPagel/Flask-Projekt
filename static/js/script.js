@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tableButton.addEventListener('click', () => {
             graphContainer.style.display = 'none';
             tableContainer.style.display = 'block';
-            loadTableData();
+            updateData();
         });
     } else {
         console.warn("Tabelle-Button nicht gefunden!");
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modeSelect && standortSelect && datumSelect) {
         modeSelect.addEventListener('change', updateDateFilter);
         standortSelect.addEventListener('change', updateDateFilter);
-        datumSelect.addEventListener('change', loadTableData);
+        datumSelect.addEventListener('change', updateData);
     } else {
         console.warn("Dropdowns nicht gefunden!");
     }
@@ -88,15 +88,15 @@ async function updateDateFilter() {
             datumSelect.appendChild(option);
         });
 
-        // Falls nur ein Datum existiert → Automatisch setzen & Tabelle neu laden
+        // Falls nur ein Datum existiert → Automatisch setzen & Daten neu laden
         datumSelect.value = data.daten[0];
-        loadTableData(); // Direkt neue Tabelle laden
+        updateData(); // Direkt neue Daten laden (Tabelle + Diagramm)
     }
 }
 
-// 🟢 Tabelle mit Daten füllen
-async function loadTableData() {
-    console.log("Lade Tabellendaten...");
+// 🟢 API-Daten abrufen & in Tabelle/Diagramm einfügen
+async function updateData() {
+    console.log("Lade Daten für Tabelle & Diagramm...");
 
     const datumFilter = document.getElementById('datum-select').value;  
     let url = '/api/data';
@@ -108,7 +108,7 @@ async function loadTableData() {
     const response = await fetch(url);
     const data = await response.json();
 
-    console.log("Tabellen-Daten:", data);
+    console.log("API-Daten:", data);
 
     const tableBody = document.getElementById('table-body');
     tableBody.innerHTML = ''; // Vorherige Einträge löschen
