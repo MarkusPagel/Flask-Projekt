@@ -175,7 +175,9 @@ function updateCharts(data) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: false,
+                    suggestedMin: Math.min(...temperatures) - 5,
+                    suggestedMax: Math.max(...temperatures) + 5
                 }
             }
         }
@@ -197,7 +199,9 @@ function updateCharts(data) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: false,
+                    suggestedMin: Math.min(...humidities) - 5,
+                    suggestedMax: Math.max(...humidities) + 5
                 }
             }
         }
@@ -219,7 +223,9 @@ function updateCharts(data) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: false,
+                    suggestedMin: Math.min(...pressures) - 5,
+                    suggestedMax: Math.max(...pressures) + 5
                 }
             }
         }
@@ -241,7 +247,9 @@ function updateCharts(data) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: false,
+                    suggestedMin: Math.min(...gasLevels) - 5,
+                    suggestedMax: Math.max(...gasLevels) + 5
                 }
             }
         }
