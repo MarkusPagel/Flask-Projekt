@@ -78,6 +78,8 @@ async function updateDateFilter() {
 
     // 🟢 Datum-Dropdown aktualisieren
     const datumSelect = document.getElementById('datum-select');
+    datumSelect.innerHTML = ''; 
+    const datumSelect = document.getElementById('datum-select');
     data.daten.forEach(datum => {
         const option = document.createElement('option');
         option.value = datum;
