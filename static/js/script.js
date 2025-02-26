@@ -32,19 +32,26 @@ document.addEventListener('DOMContentLoaded', () => {
 // 🟢 Datumsauswahl basierend auf Drinnen/Draußen & Ort einschränken
 async function updateDateFilter() {
     const drinnen = document.getElementById('mode-select').value;
-    const standort = document.getElementById('standort-select').value;
+    const standortSelect = document.getElementById('standort-select');
 
-    let url = `/api/filter-options`;
-    if (drinnen || standort) {
-        url += `?drinnen=${drinnen}&standort=${standort}`;
-    }
-
+    let url = `/api/filter-options?drinnen=${drinnen}`;
     const response = await fetch(url);
     const data = await response.json();
 
+    // 🟢 Wenn nur ein Ort vorhanden ist, trotzdem anzeigen
+    if (data.orte.length === 1) {
+        standortSelect.innerHTML += `<option value="${data.orte[0]}" selected>${data.orte[0]}</option>`;
+    } else {
+        data.orte.forEach(ort => {
+            const option = document.createElement('option');
+            option.value = ort;
+            option.textContent = ort;
+            standortSelect.appendChild(option);
+        });
+    }
+
     // 🟢 Datum-Dropdown aktualisieren
     const datumSelect = document.getElementById('datum-select');
-    datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
         const option = document.createElement('option');
         option.value = datum;
@@ -52,6 +59,7 @@ async function updateDateFilter() {
         datumSelect.appendChild(option);
     });
 }
+
 
 // 🟢 Tabelle mit Daten füllen
 async function loadTableData() {
