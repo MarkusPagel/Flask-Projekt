@@ -82,10 +82,16 @@ h1 {
 .graph-box {
     background-color: #333;
     border-radius: 10px;
-    padding: 30px;
-    min-height: 300px; /* Increased height */
+    padding: 20px;
+    height: 400px; /* Increased height */
     text-align: center;
     font-size: 18px;
+    position: relative;
+}
+
+.graph-box canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* Tabelle */
@@ -127,6 +133,7 @@ th {
         grid-template-columns: 1fr;
     }
 }
+
     </style>
 </head>
 <body>
