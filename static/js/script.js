@@ -48,7 +48,6 @@ async function loadAllOrte() {
 
     console.log("Antwort von /api/filter-options:", data);
 
-    standortSelect.innerHTML = '<option value="">Ort wählen</option>';
     data.orte.forEach(ort => {
         const option = document.createElement('option');
         option.value = ort;
@@ -79,7 +78,6 @@ async function updateDateFilter() {
 
     // 🟢 Datum-Dropdown aktualisieren
     const datumSelect = document.getElementById('datum-select');
-    datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
         const option = document.createElement('option');
         option.value = datum;
