@@ -115,7 +115,10 @@ async function loadTableData() {
             <td>${entry.standort}</td>
             <td>${entry.temperatur} °C</td>
             <td>${entry.luftfeuchte} %</td>
+            <td>${entry.pressure ? entry.pressure + " hPa" : "N/A"}</td>
+            <td>${entry.gas ? entry.gas + " ppm" : "N/A"}</td>
         `;
         tableBody.appendChild(row);
     });
 }
+
