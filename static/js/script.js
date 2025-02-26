@@ -43,6 +43,63 @@ document.addEventListener('DOMContentLoaded', () => {
 // 🟢 Variable für das Diagramm
 let tempChart;  
 
+async function updateDateFilter() {
+    console.log("Filter aktualisieren...");
+
+    const drinnen = document.getElementById('mode-select').value;
+    const standortSelect = document.getElementById('standort-select');
+    const datumSelect = document.getElementById('datum-select');
+
+    let url = `/api/filter-options`;
+    if (drinnen) {
+        url += `?drinnen=${drinnen}`;
+    }
+
+    console.log("Gesendete URL:", url);  // 🔍 Prüfen, was gesendet wird
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    console.log("Gefilterte Daten:", data);
+
+    // 🟢 Ort-Dropdown aktualisieren
+    standortSelect.innerHTML = '';  
+    if (data.orte.length > 0) {
+        data.orte.forEach(ort => {
+            const option = document.createElement('option');
+            option.value = ort;
+            option.textContent = ort;
+            standortSelect.appendChild(option);
+        });
+
+        // Falls nur ein Ort vorhanden ist, wähle ihn automatisch aus
+        if (data.orte.length === 1) {
+            standortSelect.value = data.orte[0];
+        }
+    } else {
+        console.warn("Keine Orte gefunden!");
+    }
+
+    // 🟢 Datum-Dropdown aktualisieren
+    datumSelect.innerHTML = '';  
+    if (data.daten.length > 0) {
+        data.daten.forEach(datum => {
+            const option = document.createElement('option');
+            option.value = datum;
+            option.textContent = datum;
+            datumSelect.appendChild(option);
+        });
+
+        // Falls nur ein Datum vorhanden ist, wähle es automatisch aus
+        if (data.daten.length === 1) {
+            datumSelect.value = data.daten[0];
+        }
+    } else {
+        console.warn("Keine verfügbaren Daten gefunden!");
+    }
+}
+
+
 async function loadGraphData() {
     console.log("Lade Graph-Daten...");
 
