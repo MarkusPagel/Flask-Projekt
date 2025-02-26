@@ -129,3 +129,69 @@ async function loadTableData() {
     });
 }
 
+let tempChart;  // Variable für das Diagramm
+
+async function loadGraphData() {
+    console.log("Lade Graph-Daten...");
+
+    const datumFilter = document.getElementById('datum-select').value;
+    let url = '/api/data';
+
+    if (datumFilter) {
+        url += `?datum=${datumFilter}`;
+    }
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    console.log("Graph-Daten:", data);
+
+    // Labels = Uhrzeiten, Werte = Temperaturen
+    const labels = data.map(entry => entry.uhrzeit);
+    const temperatures = data.map(entry => entry.temperatur);
+
+    // Falls der Graph bereits existiert, vorher löschen
+    if (tempChart) {
+        tempChart.destroy();
+    }
+
+    // Neuen Graphen erstellen
+    const ctx = document.getElementById('tempChart').getContext('2d');
+    tempChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Temperaturverlauf',
+                data: temperatures,
+                borderColor: 'red',
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Uhrzeit'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Temperatur (°C)'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Falls das Diagramm geöffnet wird, lade die Daten
+document.getElementById('show-graph').addEventListener('click', () => {
+    loadGraphData();
+});
+
+
