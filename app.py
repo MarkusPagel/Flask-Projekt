@@ -130,25 +130,24 @@ def get_filter_options():
 
     query = db.session.query(Wetterdaten)
 
-    # Falls der Benutzer eine Auswahl für Drinnen/Draußen getroffen hat
+    # Falls Drinnen/Draußen ausgewählt wurde → Nur passende Daten
     if drinnen_filter in ["0", "1"]:
         query = query.filter(Wetterdaten.drinnen == int(drinnen_filter))
 
-    # Falls der Benutzer einen Ort ausgewählt hat
+    # Falls ein Ort ausgewählt wurde → Nur passende Daten
     if ort_filter:
         query = query.filter(Wetterdaten.standort == ort_filter)
 
-    # Alle verfügbaren Tage abrufen, die zu den Filtern passen
+    # Verfügbare Tage abrufen
     daten = query.with_entities(Wetterdaten.datum).distinct().all()
+    orte = db.session.query(Wetterdaten.standort).distinct().all()  # Alle Orte abrufen
 
     response = {
-        "daten": [d[0].strftime('%Y-%m-%d') for d in daten]
+        "daten": [d[0].strftime('%Y-%m-%d') for d in daten],
+        "orte": [o[0] for o in orte]  # Alle Orte hinzufügen
     }
 
     return jsonify(response)
-
-
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
