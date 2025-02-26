@@ -65,28 +65,35 @@ async function updateDateFilter() {
 
     const drinnen = document.getElementById('mode-select').value;
     const standort = document.getElementById('standort-select').value;
-    let url = `/api/filter-options`;
 
+    let url = `/api/filter-options`;
     if (drinnen || standort) {
         url += `?drinnen=${drinnen}&standort=${standort}`;
     }
+
+    console.log("Gesendete URL:", url);  // 🟢 Debugging, um die URL zu sehen
 
     const response = await fetch(url);
     const data = await response.json();
 
     console.log("Gefilterte Daten:", data);
 
-    // 🟢 Datum-Dropdown aktualisieren
+    // 🟢 Datum-Dropdown vorher komplett leeren
     const datumSelect = document.getElementById('datum-select');
-    datumSelect.innerHTML = ''; 
-    const datumSelect = document.getElementById('datum-select');
-    data.daten.forEach(datum => {
-        const option = document.createElement('option');
-        option.value = datum;
-        option.textContent = datum;
-        datumSelect.appendChild(option);
-    });
+    datumSelect.innerHTML = '';  
+
+    if (data.daten.length === 0) {
+        console.warn("Kein verfügbares Datum gefunden!");
+    } else {
+        data.daten.forEach(datum => {
+            const option = document.createElement('option');
+            option.value = datum;
+            option.textContent = datum;
+            datumSelect.appendChild(option);
+        });
+    }
 }
+
 
 // 🟢 Tabelle mit Daten füllen
 async function loadTableData() {
