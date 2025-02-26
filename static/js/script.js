@@ -48,7 +48,7 @@ async function loadAllOrte() {
 }
 
 // 🟢 Datumsauswahl basierend auf Drinnen/Draußen & Ort einschränken
-async function updateDateFilter() {
+async function updateFilterOptions() {
     const drinnen = document.getElementById('mode-select').value;
     const standortSelect = document.getElementById('standort-select');
 
@@ -60,7 +60,7 @@ async function updateDateFilter() {
     const response = await fetch(url);
     const data = await response.json();
 
-    // 🟢 1. Orte IMMER aktualisieren (egal, ob Drinnen/Draußen gewählt wurde)
+    // 🟢 1. Orte IMMER aktualisieren (direkt beim Laden)
     standortSelect.innerHTML = '<option value="">Ort wählen</option>';
     data.orte.forEach(ort => {
         const option = document.createElement('option');
@@ -69,7 +69,7 @@ async function updateDateFilter() {
         standortSelect.appendChild(option);
     });
 
-    // 🟢 2. Datum-Dropdown basierend auf Drinnen/Draußen + Ort aktualisieren
+    // 🟢 2. Datum nur basierend auf Drinnen/Draußen filtern
     const datumSelect = document.getElementById('datum-select');
     datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
@@ -79,6 +79,9 @@ async function updateDateFilter() {
         datumSelect.appendChild(option);
     });
 }
+
+// 🟢 Orte & Filter direkt beim Laden holen
+document.addEventListener('DOMContentLoaded', updateFilterOptions);
 
 // Wenn Drinnen/Draußen geändert wird → Aktualisiere die Optionen
 document.getElementById('mode-select').addEventListener('change', updateDateFilter);
