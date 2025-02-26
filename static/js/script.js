@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Diagramm-Button wurde geklickt!");
 
         // 🟢 Sicherstellen, dass das Diagramm sichtbar wird
-        graphContainer.style.display = 'block';  
+        graphContainer.style.display = 'grid';  
         tableContainer.style.display = 'none';
 
         updateData(); // API-Daten für Diagramm & Tabelle laden
