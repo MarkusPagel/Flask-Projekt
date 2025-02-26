@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log("Script.js wurde geladen!");
 
     const graphContainer = document.getElementById('graph-container');
@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const standortSelect = document.getElementById('standort-select');
     const datumSelect = document.getElementById('datum-select');
 
-    // 🟢 Fehler vermeiden: Prüfen, ob alle Buttons existieren
+    let sensorChart; // Variable für Chart.js
+
     if (tableButton && chartButton) {
         tableButton.addEventListener('click', () => {
             graphContainer.style.display = 'none';
@@ -20,12 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
         chartButton.addEventListener('click', () => {
             graphContainer.style.display = 'grid';
             tableContainer.style.display = 'none';
+            loadChartData(); // Diagramm neu laden
         });
     } else {
         console.warn("Tabelle- oder Diagramm-Button nicht gefunden!");
     }
 
-    // 🟢 Event-Listener für Dropdowns setzen
     if (modeSelect && standortSelect && datumSelect) {
         modeSelect.addEventListener('change', updateDateFilter);
         standortSelect.addEventListener('change', updateDateFilter);
@@ -34,97 +35,63 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Dropdowns nicht gefunden!");
     }
 
-    // 🟢 Beim Laden alle Orte abrufen
-    loadAllOrte();
-});
+    await loadAllOrte();
 
-// 🟢 Alle Orte von Anfang an abrufen
-async function loadAllOrte() {
-    console.log("Lade alle Orte...");
+    // 🟢 Funktion: Holt die Messwerte & erstellt das Diagramm
+    async function loadChartData() {
+        console.log("Lade Chart-Daten...");
+        const datumFilter = datumSelect.value;
+        let url = '/api/data';
 
-    const standortSelect = document.getElementById('standort-select');
-    const response = await fetch('/api/filter-options');
-    const data = await response.json();
+        if (datumFilter) {
+            url += `?datum=${datumFilter}`;
+        }
 
-    console.log("Antwort von /api/filter-options:", data);
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("Daten für Chart.js:", data);
 
-    data.orte.forEach(ort => {
-        const option = document.createElement('option');
-        option.value = ort;
-        option.textContent = ort;
-        standortSelect.appendChild(option);
-    });
+        const labels = data.map(entry => entry.uhrzeit); // X-Achse: Uhrzeiten
+        const temperatures = data.map(entry => entry.temperatur); // Y-Achse: Temperaturen
 
-    // Nach dem Laden der Orte: Filter für das Datum aktualisieren
-    updateDateFilter();
-}
+        const ctx = document.getElementById('sensor-chart').getContext('2d');
 
-// 🟢 Datum basierend auf Drinnen/Draußen & Ort filtern
-async function updateDateFilter() {
-    console.log("Filter aktualisieren...");
+        if (sensorChart) {
+            sensorChart.destroy(); // Vorhandenes Diagramm löschen
+        }
 
-    const drinnen = document.getElementById('mode-select').value;
-    const standort = document.getElementById('standort-select').value;
-
-    let url = `/api/filter-options`;
-    if (drinnen || standort) {
-        url += `?drinnen=${drinnen}&standort=${standort}`;
-    }
-
-    console.log("Gesendete URL:", url);  // 🟢 Debugging, um die URL zu sehen
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    console.log("Gefilterte Daten:", data);
-
-    // 🟢 Datum-Dropdown vorher komplett leeren
-    const datumSelect = document.getElementById('datum-select');
-    datumSelect.innerHTML = '';  
-
-    if (data.daten.length === 0) {
-        console.warn("Kein verfügbares Datum gefunden!");
-    } else {
-        data.daten.forEach(datum => {
-            const option = document.createElement('option');
-            option.value = datum;
-            option.textContent = datum;
-            datumSelect.appendChild(option);
+        sensorChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Temperatur (°C)',
+                    data: temperatures,
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Uhrzeit'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Temperatur (°C)'
+                        },
+                        beginAtZero: false
+                    }
+                }
+            }
         });
     }
-}
-
-
-// 🟢 Tabelle mit Daten füllen
-async function loadTableData() {
-    console.log("Lade Tabellendaten...");
-
-    const datumFilter = document.getElementById('datum-select').value;  
-    let url = '/api/data';
-
-    if (datumFilter) {
-        url += `?datum=${datumFilter}`;
-    }
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    console.log("Tabellen-Daten:", data);
-
-    const tableBody = document.getElementById('table-body');
-    tableBody.innerHTML = ''; // Vorherige Einträge löschen
-
-    data.forEach(entry => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${entry.datum}</td>
-            <td>${entry.uhrzeit}</td>
-            <td>${entry.standort}</td>
-            <td>${entry.temperatur} °C</td>
-            <td>${entry.luftfeuchte} %</td>
-            <td>${entry.pressure ? entry.pressure + " hPa" : "N/A"}</td>
-            <td>${entry.gas ? entry.gas + " ppm" : "N/A"}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
+});
