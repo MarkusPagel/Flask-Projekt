@@ -27,27 +27,31 @@ document.addEventListener('DOMContentLoaded', () => {
             tableContainer.style.display = 'none';
         });
     }
+
+    // 🟢 Lade alle Orte direkt beim Start
+    loadAllOrte();
 });
 
-// 🟢 Datumsauswahl basierend auf Drinnen/Draußen & Ort einschränken
-async function updateDateFilter() {
-    const drinnen = document.getElementById('mode-select').value;
+// 🟢 Alle Orte abrufen & Dropdown füllen (unabhängig von Drinnen/Draußen)
+async function loadAllOrte() {
     const standortSelect = document.getElementById('standort-select');
-
-    // 🟢 1. Zuerst alle verfügbaren Orte abrufen
-    const ortResponse = await fetch('/api/orte'); // Neuer API-Endpunkt nur für Orte
-    const ortData = await ortResponse.json();
+    const response = await fetch('/api/orte');
+    const data = await response.json();
 
     standortSelect.innerHTML = '<option value="">Ort wählen</option>';
-    ortData.orte.forEach(ort => {
+    data.orte.forEach(ort => {
         const option = document.createElement('option');
         option.value = ort;
         option.textContent = ort;
         standortSelect.appendChild(option);
     });
+}
 
-    // 🟢 2. Jetzt das Datum basierend auf "Drinnen/Draußen" und "Ort" filtern
-    const standort = standortSelect.value;
+// 🟢 Datumsauswahl basierend auf Drinnen/Draußen & Ort einschränken
+async function updateDateFilter() {
+    const drinnen = document.getElementById('mode-select').value;
+    const standort = document.getElementById('standort-select').value;
+
     let url = `/api/filter-options`;
     if (drinnen || standort) {
         url += `?drinnen=${drinnen}&standort=${standort}`;
@@ -66,9 +70,6 @@ async function updateDateFilter() {
         datumSelect.appendChild(option);
     });
 }
-
-
-
 
 // 🟢 Tabelle mit Daten füllen
 async function loadTableData() {
