@@ -7,10 +7,11 @@
     <title>Wetterdaten</title>
     <style>
         /* Allgemeine Stile */
+/* Allgemeine Stile */
 body {
     font-family: Arial, sans-serif;
-    background-color: #121A2A; /* Dunkles Blau statt Schwarz */
-    color: #EAE0D5; /* Sanftes Beige-Weiß statt hartes Weiß */
+    background-color: #1B3A2B; /* Dunkles Grün statt Schwarz */
+    color: #BFCFB2; /* Sanftes Hellgrün für bessere Lesbarkeit */
     text-align: center;
     margin: 0;
     padding: 20px;
@@ -26,7 +27,7 @@ body {
 h1 {
     text-align: center;
     margin-bottom: 20px;
-    color: #FFFFFF; /* Leicht heller für bessere Sichtbarkeit */
+    color: #FFD700; /* Goldenes Highlight für den Titel */
 }
 
 /* Top-Bar */
@@ -34,29 +35,29 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #1E2235; /* Dunkleres Grau-Blau */
+    background-color: #2E2A1E; /* Erdiger Braunton */
     padding: 15px;
     border-radius: 10px;
 }
 
 /* Dropdowns & Eingabefelder */
 .input {
-    background-color: #2A2F44; /* Weicher als Schwarz */
-    color: #EAE0D5;
+    background-color: #3A4D39; /* Dunkleres Grün */
+    color: #BFCFB2;
     border: 1px solid #444;
 }
 
 /* Buttons */
 .btn {
-    background-color: #FFB74D; /* Warmes Orange */
-    color: #121A2A; /* Kontrast zu dunklem Hintergrund */
+    background-color: #D4AF37; /* Goldene Buttons für edlen Look */
+    color: #1B3A2B; /* Kontrast zum dunklen Hintergrund */
     cursor: pointer;
     font-weight: bold;
     transition: 0.3s;
 }
 
 .btn:hover {
-    background-color: #FF6E6E; /* Weiches Pink als Hover */
+    background-color: #00A896; /* Türkis als Hover-Effekt */
 }
 
 /* Graphen-Bereich */
@@ -67,27 +68,27 @@ h1 {
     gap: 20px;
     margin-top: 30px;
     padding: 20px;
-    background-color: #1E2235; /* Sanftere Box-Hintergründe */
+    background-color: #2E2A1E; /* Dunkleres Braun für mehr Natürlichkeit */
     border-radius: 15px;
     width: 100%;
 }
 
 /* Graphen-Boxen */
 .graph-box {
-    background-color: #2A2F44; /* Etwas heller als Hintergrund */
+    background-color: #3A4D39; /* Sanftes Grün als Kontrast */
     border-radius: 10px;
     padding: 30px;
     min-height: 200px;
     text-align: center;
     font-size: 18px;
-    box-shadow: 0px 0px 10px rgba(255, 183, 77, 0.3); /* Leichter Glow */
+    box-shadow: 0px 0px 10px rgba(212, 175, 55, 0.3); /* Goldener Glow */
 }
 
 /* Tabellenbereich */
 .table-container {
     margin-top: 20px;
     padding: 20px;
-    background-color: #1E2235;
+    background-color: #2E2A1E;
     border-radius: 15px;
     width: 100%;
     display: none;
@@ -96,8 +97,8 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #2A2F44; /* Weicher als Schwarz */
-    color: #EAE0D5;
+    background-color: #3A4D39; /* Sanftes Grün für angenehmes Design */
+    color: #BFCFB2;
 }
 
 th, td {
@@ -107,7 +108,7 @@ th, td {
 }
 
 th {
-    background-color: #3A3F55; /* Leicht heller für besseren Kontrast */
+    background-color: #4E4338; /* Erdiger Ton für Kontrast */
 }
 
 /* Info-Tooltip */
@@ -115,7 +116,7 @@ th {
     cursor: help;
     font-size: 14px;
     margin-left: 5px;
-    color: #FFB74D; /* Passend zum Button */
+    color: #D4AF37; /* Gold für eleganten Look */
 }
 
 /* Responsive Anpassung */
@@ -124,7 +125,6 @@ th {
         grid-template-columns: 1fr;
     }
 }
-
 
     </style>
 </head>
