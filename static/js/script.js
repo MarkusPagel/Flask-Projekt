@@ -21,18 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (chartButton) {
-    chartButton.addEventListener('click', () => {
-        console.log("Diagramm-Button wurde geklickt!");
+        chartButton.addEventListener('click', () => {
+            console.log("Diagramm-Button wurde geklickt!");
 
-        // 🟢 Sicherstellen, dass das Diagramm sichtbar wird
-        graphContainer.style.display = 'grid';  
-        tableContainer.style.display = 'none';
+            // 🟢 Sicherstellen, dass das Diagramm sichtbar wird
+            graphContainer.style.display = 'grid';
+            tableContainer.style.display = 'none';
 
-        updateData(); // API-Daten für Diagramm & Tabelle laden
-    });
-} else {
-    console.warn("Diagramm-Button nicht gefunden!");
-}
+            updateData(); // API-Daten für Diagramm & Tabelle laden
+        });
+    } else {
+        console.warn("Diagramm-Button nicht gefunden!");
+    }
 
     // 🟢 Event-Listener für Dropdowns setzen
     if (modeSelect && standortSelect && datumSelect) {
@@ -57,7 +57,7 @@ async function loadAllOrte() {
 
     console.log("Antwort von /api/filter-options:", data);
 
-    standortSelect.innerHTML = '';  
+    standortSelect.innerHTML = '';
     data.orte.forEach(ort => {
         const option = document.createElement('option');
         option.value = ort;
@@ -82,7 +82,7 @@ async function updateDateFilter() {
         url += `?drinnen=${drinnen}&standort=${standort}`;
     }
 
-    console.log("Gesendete URL:", url);  
+    console.log("Gesendete URL:", url);
 
     const response = await fetch(url);
     const data = await response.json();
@@ -90,7 +90,7 @@ async function updateDateFilter() {
     console.log("Gefilterte Daten:", data);
 
     // 🟢 Datum-Dropdown vorher komplett leeren
-    datumSelect.innerHTML = '';  
+    datumSelect.innerHTML = '';
 
     if (data.daten.length === 0) {
         console.warn("Kein verfügbares Datum gefunden!");
@@ -112,7 +112,7 @@ async function updateDateFilter() {
 async function updateData() {
     console.log("Lade Daten für Tabelle & Diagramm...");
 
-    const datumFilter = document.getElementById('datum-select').value;  
+    const datumFilter = document.getElementById('datum-select').value;
     let url = '/api/data';
 
     if (datumFilter) {
@@ -139,5 +139,111 @@ async function updateData() {
             <td>${entry.gas ? entry.gas + " ppm" : "N/A"}</td>
         `;
         tableBody.appendChild(row);
+    });
+
+    // 🟢 Chart.js Diagramme aktualisieren
+    updateCharts(data);
+}
+
+// 🟢 Chart.js Diagramme aktualisieren
+function updateCharts(data) {
+    const ctx1 = document.getElementById('myChart1').getContext('2d');
+    const ctx2 = document.getElementById('myChart2').getContext('2d');
+    const ctx3 = document.getElementById('myChart3').getContext('2d');
+    const ctx4 = document.getElementById('myChart4').getContext('2d');
+
+    // Beispiel-Daten für die Diagramme
+    const labels = data.map(entry => entry.uhrzeit);
+    const temperatures = data.map(entry => entry.temperatur);
+    const humidities = data.map(entry => entry.luftfeuchte);
+    const pressures = data.map(entry => entry.pressure);
+    const gasLevels = data.map(entry => entry.gas);
+
+    // Diagramm 1: Temperatur
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Temperatur (°C)',
+                data: temperatures,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Diagramm 2: Luftfeuchte
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Luftfeuchte (%)',
+                data: humidities,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Diagramm 3: Luftdruck
+    new Chart(ctx3, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Luftdruck (hPa)',
+                data: pressures,
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Diagramm 4: Luftqualität
+    new Chart(ctx4, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Luftqualität (ppm)',
+                data: gasLevels,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
     });
 }
