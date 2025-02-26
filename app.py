@@ -138,13 +138,15 @@ def get_filter_options():
     if ort_filter:
         query = query.filter(Wetterdaten.standort == ort_filter)
 
-    # Verfügbare Tage abrufen
+    # Verfügbare Tage abrufen (gefiltert)
     daten = query.with_entities(Wetterdaten.datum).distinct().all()
-    orte = db.session.query(Wetterdaten.standort).distinct().all()  # Alle Orte abrufen
+
+    # 🟢 Alle Orte OHNE Filter abrufen
+    alle_orte = db.session.query(Wetterdaten.standort).distinct().all()
 
     response = {
         "daten": [d[0].strftime('%Y-%m-%d') for d in daten],
-        "orte": [o[0] for o in orte]  # Alle Orte hinzufügen
+        "orte": [o[0] for o in alle_orte]  # Alle Orte IMMER zurückgeben
     }
 
     return jsonify(response)
