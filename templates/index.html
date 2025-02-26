@@ -5,6 +5,7 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wetterdaten</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -114,12 +115,11 @@
             background-color: #444;
         }
         .info-tooltip {
-    cursor: help;
-    font-size: 14px;
-    margin-left: 5px;
-    color: blue;
-}
-
+            cursor: help;
+            font-size: 14px;
+            margin-left: 5px;
+            color: blue;
+        }
 
         @media (max-width: 800px) {
             .graph-container {
@@ -142,8 +142,6 @@
                 </select>
                 <select id="datum-select" class="input">
                 </select>
-                
-                
             </div>
 
             <div class="right">
@@ -154,31 +152,30 @@
 
         <!-- Graphen Container -->
         <div id="graph-container" class="graph-container">
-            <div class="graph-box">Graph 1</div>
-            <div class="graph-box">Graph 2</div>
-            <div class="graph-box">Graph 3</div>
-            <div class="graph-box">Graph 4</div>
+            <div class="graph-box"><canvas id="myChart1" width="400" height="200"></canvas></div>
+            <div class="graph-box"><canvas id="myChart2" width="400" height="200"></canvas></div>
+            <div class="graph-box"><canvas id="myChart3" width="400" height="200"></canvas></div>
+            <div class="graph-box"><canvas id="myChart4" width="400" height="200"></canvas></div>
         </div>
 
         <!-- Tabelle Container (anfangs versteckt) -->
         <div id="table-container" class="table-container">
             <table>
-    <thead>
-        <tr>
-            <th>Datum</th>
-            <th>Uhrzeit</th>
-            <th>Ort</th>
-            <th>Temperatur</th>
-            <th>Luftfeuchte</th>
-            <th>Luftdruck <span class="info-tooltip" title="Luftdruck in hPa. Normal: ~1013 hPa">ℹ️</span></th>
-            <th>Luftqualität <span class="info-tooltip" title="Gemessene Gaskonzentration in ppm. Höher = schlechtere Luftqualität.">ℹ️</span></th>
-        </tr>
-    </thead>
-    <tbody id="table-body">
-        <!-- Daten werden hier eingefügt -->
-    </tbody>
-</table>
-
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Uhrzeit</th>
+                        <th>Ort</th>
+                        <th>Temperatur</th>
+                        <th>Luftfeuchte</th>
+                        <th>Luftdruck <span class="info-tooltip" title="Luftdruck in hPa. Normal: ~1013 hPa">ℹ️</span></th>
+                        <th>Luftqualität <span class="info-tooltip" title="Gemessene Gaskonzentration in ppm. Höher = schlechtere Luftqualität.">ℹ️</span></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Daten werden hier eingefügt -->
+                </tbody>
+            </table>
         </div>
     </div>
 </body>
