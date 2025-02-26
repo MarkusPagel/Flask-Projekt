@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Script.js wurde geladen!");
-
+    updateDateFilter();
     const graphButton = document.getElementById('show-graph');
     const datumSelect = document.getElementById('datum-select');
     const tableButton = document.getElementById('show-table');
     const graphContainer = document.getElementById('graph-container');
     const tableContainer = document.getElementById('table-container');
-
+    
     // 🟢 Event-Listener für den "Diagramm"-Button
     if (graphButton) {
         graphButton.addEventListener('click', () => {
