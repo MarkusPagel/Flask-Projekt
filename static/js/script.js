@@ -10,38 +10,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const datumSelect = document.getElementById('datum-select');
 
     // 🟢 Fehler vermeiden: Prüfen, ob alle Buttons existieren
-    if (tableButton && chartButton) {
+    if (tableButton) {
         tableButton.addEventListener('click', () => {
             graphContainer.style.display = 'none';
             tableContainer.style.display = 'block';
             loadTableData();
         });
-
-        chartButton.addEventListener('click', () => {
-            graphContainer.style.display = 'grid';
-            tableContainer.style.display = 'none';
-            loadGraphData();
-        });
     } else {
-        console.warn("Tabelle- oder Diagramm-Button nicht gefunden!");
+        console.warn("Tabelle-Button nicht gefunden!");
     }
 
     // 🟢 Event-Listener für Dropdowns setzen
     if (modeSelect && standortSelect && datumSelect) {
-        modeSelect.addEventListener('change', () => {
-            updateDateFilter();
-        });
-        standortSelect.addEventListener('change', () => {
-            updateDateFilter();
-        });
-        datumSelect.addEventListener('change', () => {
-            loadGraphData();
-        });
+        modeSelect.addEventListener('change', updateDateFilter);
+        standortSelect.addEventListener('change', updateDateFilter);
+        datumSelect.addEventListener('change', loadTableData);
     } else {
         console.warn("Dropdowns nicht gefunden!");
     }
 
-    // 🟢 Beim Laden alle Orte abrufen & direkt Diagramm laden
+    // 🟢 Beim Laden alle Orte abrufen
     loadAllOrte();
 });
 
@@ -67,7 +55,7 @@ async function loadAllOrte() {
     updateDateFilter();
 }
 
-// 🟢 Datum basierend auf Drinnen/Draußen & Ort filtern → Danach automatisch Diagramm laden!
+// 🟢 Datum basierend auf Drinnen/Draußen & Ort filtern → Danach automatisch das neue Datum setzen!
 async function updateDateFilter() {
     console.log("Filter aktualisieren...");
 
@@ -100,12 +88,10 @@ async function updateDateFilter() {
             datumSelect.appendChild(option);
         });
 
-        // Falls nur ein Datum existiert → Automatisch setzen & Diagramm laden
+        // Falls nur ein Datum existiert → Automatisch setzen & Tabelle neu laden
         datumSelect.value = data.daten[0];
+        loadTableData(); // Direkt neue Tabelle laden
     }
-
-    // 🟢 Direkt Diagramm neu laden
-    loadGraphData();
 }
 
 // 🟢 Tabelle mit Daten füllen
@@ -140,67 +126,4 @@ async function loadTableData() {
         `;
         tableBody.appendChild(row);
     });
-}
-
-// 🟢 Diagramm mit Daten laden
-let tempChart;  
-
-async function loadGraphData() {
-    console.log("Lade Graph-Daten...");
-
-    const datumFilter = document.getElementById('datum-select').value;
-    let url = '/api/data';
-
-    if (datumFilter) {
-        url += `?datum=${datumFilter}`;
-    }
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    console.log("Graph-Daten:", data);
-
-    const labels = data.map(entry => entry.uhrzeit);
-    const temperatures = data.map(entry => entry.temperatur);
-
-    // 🟢 Falls der Graph bereits existiert, vorher zerstören!
-    if (tempChart) {
-        tempChart.destroy();
-    }
-
-    // 🟢 Neuen Graphen im Canvas erstellen
-    const ctx = document.getElementById('tempChart').getContext('2d');
-    tempChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Temperaturverlauf',
-                data: temperatures,
-                borderColor: 'red',
-                borderWidth: 2,
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,  
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Uhrzeit'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Temperatur (°C)'
-                    }
-                }
-            }
-        }
-    });
-
-    console.log("Graph aktualisiert!");
 }
