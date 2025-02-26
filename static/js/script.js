@@ -189,9 +189,17 @@ async function loadGraphData() {
     });
 }
 
-// Falls das Diagramm geöffnet wird, lade die Daten
-document.getElementById('show-graph').addEventListener('click', () => {
-    loadGraphData();
+document.addEventListener('DOMContentLoaded', () => {
+    const graphButton = document.getElementById('show-graph');
+
+    if (graphButton) {
+        graphButton.addEventListener('click', () => {
+            loadGraphData();
+        });
+    } else {
+        console.warn("Button 'show-graph' nicht gefunden!");
+    }
 });
+
 
 
