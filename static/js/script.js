@@ -39,6 +39,7 @@ async function updateDateFilter() {
     const data = await response.json();
 
     // 🟢 Wenn nur ein Ort vorhanden ist, trotzdem anzeigen
+    standortSelect.innerHTML = '<option value="">Ort wählen</option>';
     if (data.orte.length === 1) {
         standortSelect.innerHTML += `<option value="${data.orte[0]}" selected>${data.orte[0]}</option>`;
     } else {
@@ -52,6 +53,7 @@ async function updateDateFilter() {
 
     // 🟢 Datum-Dropdown aktualisieren
     const datumSelect = document.getElementById('datum-select');
+    datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
         const option = document.createElement('option');
         option.value = datum;
@@ -59,6 +61,7 @@ async function updateDateFilter() {
         datumSelect.appendChild(option);
     });
 }
+
 
 
 // 🟢 Tabelle mit Daten füllen
