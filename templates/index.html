@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wetterdaten</title>
     <style>
@@ -114,23 +113,6 @@
         th {
             background-color: #444;
         }
-        #graph-container {
-            width: 100%;
-            max-width: 800px; /* Maximale Breite */
-            height: 400px; /* Feste Höhe */
-            margin: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #tempChart {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 800px;
-            max-height: 400px;
-        }
-
 
         @media (max-width: 800px) {
             .graph-container {
@@ -165,10 +147,7 @@
 
         <!-- Graphen Container -->
         <div id="graph-container" class="graph-container">
-            <div id="graph-container" class="graph-container">
-                <canvas id="tempChart"></canvas>
-            </div>
-
+            <div class="graph-box">Graph 1</div>
             <div class="graph-box">Graph 2</div>
             <div class="graph-box">Graph 3</div>
             <div class="graph-box">Graph 4</div>
