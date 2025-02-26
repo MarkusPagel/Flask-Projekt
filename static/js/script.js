@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("Script.js wurde geladen!");
+
     const graphContainer = document.getElementById('graph-container');
     const tableContainer = document.getElementById('table-container');
     const tableButton = document.getElementById('show-table');
@@ -7,14 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const standortSelect = document.getElementById('standort-select');
     const datumSelect = document.getElementById('datum-select');
 
-    // 🟢 Sicherstellen, dass alle Dropdowns existieren
-    if (modeSelect && standortSelect && datumSelect) {
-        modeSelect.addEventListener('change', updateDateFilter);
-        standortSelect.addEventListener('change', updateDateFilter);
-        datumSelect.addEventListener('change', loadTableData);
-    }
-
-    // 🟢 Sicherstellen, dass die Buttons existieren
+    // 🟢 Fehler vermeiden: Prüfen, ob alle Buttons existieren
     if (tableButton && chartButton) {
         tableButton.addEventListener('click', () => {
             graphContainer.style.display = 'none';
@@ -26,17 +21,32 @@ document.addEventListener('DOMContentLoaded', () => {
             graphContainer.style.display = 'grid';
             tableContainer.style.display = 'none';
         });
+    } else {
+        console.warn("Tabelle- oder Diagramm-Button nicht gefunden!");
     }
 
-    // 🟢 Lade alle Orte direkt beim Start
+    // 🟢 Event-Listener für Dropdowns setzen
+    if (modeSelect && standortSelect && datumSelect) {
+        modeSelect.addEventListener('change', updateDateFilter);
+        standortSelect.addEventListener('change', updateDateFilter);
+        datumSelect.addEventListener('change', loadTableData);
+    } else {
+        console.warn("Dropdowns nicht gefunden!");
+    }
+
+    // 🟢 Beim Laden alle Orte abrufen
     loadAllOrte();
 });
 
-// 🟢 Alle Orte abrufen & Dropdown füllen (unabhängig von Drinnen/Draußen)
+// 🟢 Alle Orte von Anfang an abrufen
 async function loadAllOrte() {
+    console.log("Lade alle Orte...");
+
     const standortSelect = document.getElementById('standort-select');
-    const response = await fetch('/api/orte');
+    const response = await fetch('/api/filter-options');
     const data = await response.json();
+
+    console.log("Antwort von /api/filter-options:", data);
 
     standortSelect.innerHTML = '<option value="">Ort wählen</option>';
     data.orte.forEach(ort => {
@@ -45,31 +55,29 @@ async function loadAllOrte() {
         option.textContent = ort;
         standortSelect.appendChild(option);
     });
+
+    // Nach dem Laden der Orte: Filter für das Datum aktualisieren
+    updateDateFilter();
 }
 
-// 🟢 Datumsauswahl basierend auf Drinnen/Draußen & Ort einschränken
-async function updateFilterOptions() {
-    const drinnen = document.getElementById('mode-select').value;
-    const standortSelect = document.getElementById('standort-select');
+// 🟢 Datum basierend auf Drinnen/Draußen & Ort filtern
+async function updateDateFilter() {
+    console.log("Filter aktualisieren...");
 
+    const drinnen = document.getElementById('mode-select').value;
+    const standort = document.getElementById('standort-select').value;
     let url = `/api/filter-options`;
-    if (drinnen) {
-        url += `?drinnen=${drinnen}`;
+
+    if (drinnen || standort) {
+        url += `?drinnen=${drinnen}&standort=${standort}`;
     }
 
     const response = await fetch(url);
     const data = await response.json();
 
-    // 🟢 1. Orte IMMER aktualisieren (direkt beim Laden)
-    standortSelect.innerHTML = '<option value="">Ort wählen</option>';
-    data.orte.forEach(ort => {
-        const option = document.createElement('option');
-        option.value = ort;
-        option.textContent = ort;
-        standortSelect.appendChild(option);
-    });
+    console.log("Gefilterte Daten:", data);
 
-    // 🟢 2. Datum nur basierend auf Drinnen/Draußen filtern
+    // 🟢 Datum-Dropdown aktualisieren
     const datumSelect = document.getElementById('datum-select');
     datumSelect.innerHTML = '<option value="">Datum wählen</option>';
     data.daten.forEach(datum => {
@@ -80,15 +88,10 @@ async function updateFilterOptions() {
     });
 }
 
-// 🟢 Orte & Filter direkt beim Laden holen
-document.addEventListener('DOMContentLoaded', updateFilterOptions);
-
-// Wenn Drinnen/Draußen geändert wird → Aktualisiere die Optionen
-document.getElementById('mode-select').addEventListener('change', updateDateFilter);
-
-
 // 🟢 Tabelle mit Daten füllen
 async function loadTableData() {
+    console.log("Lade Tabellendaten...");
+
     const datumFilter = document.getElementById('datum-select').value;  
     let url = '/api/data';
 
@@ -98,6 +101,8 @@ async function loadTableData() {
 
     const response = await fetch(url);
     const data = await response.json();
+
+    console.log("Tabellen-Daten:", data);
 
     const tableBody = document.getElementById('table-body');
     tableBody.innerHTML = ''; // Vorherige Einträge löschen
