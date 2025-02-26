@@ -20,6 +20,20 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Tabelle-Button nicht gefunden!");
     }
 
+    if (chartButton) {
+    chartButton.addEventListener('click', () => {
+        console.log("Diagramm-Button wurde geklickt!");
+
+        // 🟢 Sicherstellen, dass das Diagramm sichtbar wird
+        graphContainer.style.display = 'block';  
+        tableContainer.style.display = 'none';
+
+        updateData(); // API-Daten für Diagramm & Tabelle laden
+    });
+} else {
+    console.warn("Diagramm-Button nicht gefunden!");
+}
+
     // 🟢 Event-Listener für Dropdowns setzen
     if (modeSelect && standortSelect && datumSelect) {
         modeSelect.addEventListener('change', updateDateFilter);
