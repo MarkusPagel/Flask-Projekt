@@ -52,7 +52,10 @@ async function loadAllOrte() {
     console.log("Lade alle Orte...");
 
     const standortSelect = document.getElementById('standort-select');
-    const response = await fetch('/api/filter-options');
+    const response = await fetch('/api/filter-options',
+                                 headers:{
+                                     'X-Api-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053';
+                                 });
     const data = await response.json();
 
     console.log("Antwort von /api/filter-options:", data);
@@ -84,7 +87,10 @@ async function updateDateFilter() {
 
     console.log("Gesendete URL:", url);
 
-    const response = await fetch(url);
+    const response = await fetch(url,
+                                 headers:{
+                                     'X-Api-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053';
+                                 });
     const data = await response.json();
 
     console.log("Gefilterte Daten:", data);
@@ -119,7 +125,10 @@ async function updateData() {
         url += `?datum=${datumFilter}`;
     }
 
-    const response = await fetch(url);
+    const response = await fetch(url,
+                                 headers:{
+                                     'X-Api-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053';
+                                 });
     const data = await response.json();
 
     console.log("API-Daten:", data);
