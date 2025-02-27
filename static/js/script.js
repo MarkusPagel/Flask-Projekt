@@ -145,115 +145,104 @@ async function updateData() {
     updateCharts(data);
 }
 
-// 🟢 Chart.js Diagramme aktualisieren
-function updateCharts(data) {
-    const ctx1 = document.getElementById('myChart1').getContext('2d');
-    const ctx2 = document.getElementById('myChart2').getContext('2d');
-    const ctx3 = document.getElementById('myChart3').getContext('2d');
-    const ctx4 = document.getElementById('myChart4').getContext('2d');
+// Globale Variablen für die Charts
+let chart1, chart2, chart3, chart4;
 
-    // Beispiel-Daten für die Diagramme
+function updateCharts(data) {
     const labels = data.map(entry => entry.uhrzeit);
     const temperatures = data.map(entry => entry.temperatur);
     const humidities = data.map(entry => entry.luftfeuchte);
     const pressures = data.map(entry => entry.pressure);
     const gasLevels = data.map(entry => entry.gas);
 
-    // Diagramm 1: Temperatur
-    new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Temperatur (°C)',
-                data: temperatures,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 2,
-                pointRadius: 3
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    suggestedMin: Math.min(...temperatures) - 5,
-                    suggestedMax: Math.max(...temperatures) + 5
-                }
+    // Falls Diagramme noch nicht existieren, erstelle sie
+    if (!chart1) {
+        const ctx1 = document.getElementById('myChart1').getContext('2d');
+        chart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Temperatur (°C)',
+                    data: temperatures,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+                }]
             }
-        }
-    });
+        });
+    } else {
+        // Falls das Diagramm schon existiert, nur die Daten aktualisieren
+        chart1.data.labels = labels;
+        chart1.data.datasets[0].data = temperatures;
+        chart1.update();
+    }
 
-    // Diagramm 2: Luftfeuchte
-    new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Luftfeuchte (%)',
-                data: humidities,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                pointRadius: 3
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    suggestedMin: Math.min(...humidities) - 5,
-                    suggestedMax: Math.max(...humidities) + 5
-                }
+    if (!chart2) {
+        const ctx2 = document.getElementById('myChart2').getContext('2d');
+        chart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Luftfeuchte (%)',
+                    data: humidities,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2
+                }]
             }
-        }
-    });
+        });
+    } else {
+        chart2.data.labels = labels;
+        chart2.data.datasets[0].data = humidities;
+        chart2.update();
+    }
 
-    // Diagramm 3: Luftdruck
-    new Chart(ctx3, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Luftdruck (hPa)',
-                data: pressures,
-                backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                borderColor: 'rgba(255, 206, 86, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    suggestedMin: Math.min(...pressures) - 5,
-                    suggestedMax: Math.max(...pressures) + 5
-                }
+    if (!chart3) {
+        const ctx3 = document.getElementById('myChart3').getContext('2d');
+        chart3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Luftdruck (hPa)',
+                    data: pressures,
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointBackgroundColor: 'rgba(255, 206, 86, 1)'
+                }]
             }
-        }
-    });
+        });
+    } else {
+        chart3.data.labels = labels;
+        chart3.data.datasets[0].data = pressures;
+        chart3.update();
+    }
 
-    // Diagramm 4: Luftqualität
-    new Chart(ctx4, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Luftqualität (ppm)',
-                data: gasLevels,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    suggestedMin: Math.min(...gasLevels) - 5,
-                    suggestedMax: Math.max(...gasLevels) + 5
-                }
+    if (!chart4) {
+        const ctx4 = document.getElementById('myChart4').getContext('2d');
+        chart4 = new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Luftqualität (ppm)',
+                    data: gasLevels,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
             }
-        }
-    });
+        });
+    } else {
+        chart4.data.labels = labels;
+        chart4.data.datasets[0].data = gasLevels;
+        chart4.update();
+    }
 }
+
