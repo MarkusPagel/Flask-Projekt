@@ -52,10 +52,15 @@ async function loadAllOrte() {
     console.log("Lade alle Orte...");
 
     const standortSelect = document.getElementById('standort-select');
-    const response = await fetch('/api/filter-options',
-                                 headers:{
-                                     'X-Api-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053';
-                                 });
+    
+    // 🟢 API-Key im Header hinzufügen
+    const response = await fetch('/api/filter-options', {
+        method: 'GET',
+        headers: {
+            'X-API-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053', // API-Key hier setzen
+            'Content-Type': 'application/json'
+        }
+    });
     const data = await response.json();
 
     console.log("Antwort von /api/filter-options:", data);
@@ -87,10 +92,14 @@ async function updateDateFilter() {
 
     console.log("Gesendete URL:", url);
 
-    const response = await fetch(url,
-                                 headers:{
-                                     'X-Api-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053';
-                                 });
+    // 🟢 API-Key im Header hinzufügen
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-API-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053', // API-Key hier setzen
+            'Content-Type': 'application/json'
+        }
+    });
     const data = await response.json();
 
     console.log("Gefilterte Daten:", data);
@@ -125,10 +134,14 @@ async function updateData() {
         url += `?datum=${datumFilter}`;
     }
 
-    const response = await fetch(url,
-                                 headers:{
-                                     'X-Api-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053';
-                                 });
+    // 🟢 API-Key im Header hinzufügen
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-API-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053', // API-Key hier setzen
+            'Content-Type': 'application/json'
+        }
+    });
     const data = await response.json();
 
     console.log("API-Daten:", data);
@@ -254,4 +267,3 @@ function updateCharts(data) {
         chart4.update();
     }
 }
-
