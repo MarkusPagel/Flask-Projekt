@@ -167,8 +167,8 @@ function updateCharts(data) {
                     data: temperatures,
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 3,
-                    pointRadius: 5,
+                    borderWidth: 2,
+                    pointRadius: 3,
                     pointBackgroundColor: 'rgba(255, 99, 132, 1)'
                 }]
             }
@@ -212,8 +212,8 @@ function updateCharts(data) {
                     data: pressures,
                     backgroundColor: 'rgba(255, 206, 86, 0.2)',
                     borderColor: 'rgba(255, 206, 86, 1)',
-                    borderWidth: 3,
-                    pointRadius: 5,
+                    borderWidth: 2,
+                    pointRadius: 3,
                     pointBackgroundColor: 'rgba(255, 206, 86, 1)'
                 }]
             }
