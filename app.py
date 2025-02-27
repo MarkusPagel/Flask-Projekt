@@ -8,6 +8,9 @@ import os
 # .env-Datei laden
 load_dotenv()
 
+# Api Key abrufen
+API_KEY = os.getenv("API_KEY")
+
 # Umgebungsvariablen abrufen
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_USER = os.getenv('DB_USER', 'root')
@@ -54,6 +57,8 @@ def home():
 # API: Alle gespeicherten Daten abrufen
 @app.route('/api/data', methods=['GET'])
 def get_data():
+    if request.headers.get("X-API-KEY") != API_KEY:
+        return jsonify({"error": "Unauthorized"}), 403
     datum_filter = request.args.get('datum')  # Datum aus der URL abfragen
     query = Wetterdaten.query
 
