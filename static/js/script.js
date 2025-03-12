@@ -56,10 +56,7 @@ async function loadAllOrte() {
     // 🟢 API-Key im Header hinzufügen
     const response = await fetch('/api/filter-options', {
         method: 'GET',
-        headers: {
-            'X-API-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053', // API-Key hier setzen
-            'Content-Type': 'application/json'
-        }
+        headers: {'Content-Type': 'application/json'}
     });
     const data = await response.json();
 
@@ -95,10 +92,7 @@ async function updateDateFilter() {
     // 🟢 API-Key im Header hinzufügen
     const response = await fetch(url, {
         method: 'GET',
-        headers: {
-            'X-API-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053', // API-Key hier setzen
-            'Content-Type': 'application/json'
-        }
+        headers: {'Content-Type': 'application/json'}
     });
     const data = await response.json();
 
@@ -137,10 +131,7 @@ async function updateData() {
     // 🟢 API-Key im Header hinzufügen
     const response = await fetch(url, {
         method: 'GET',
-        headers: {
-            'X-API-KEY': '65860e3778ed02b85468a74365a6cbe810302485066159f636fe5a165cd2c053', // API-Key hier setzen
-            'Content-Type': 'application/json'
-        }
+        headers: {'Content-Type': 'application/json'}
     });
     const data = await response.json();
 
