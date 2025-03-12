@@ -57,8 +57,7 @@ def home():
 # API: Alle gespeicherten Daten abrufen
 @app.route('/api/data', methods=['GET'])
 def get_data():
-    if request.headers.get("X-API-KEY") != API_KEY:
-        return jsonify({"error": "Unauthorized"}), 403
+    
     datum_filter = request.args.get('datum')  # Datum aus der URL abfragen
     query = Wetterdaten.query
 
@@ -86,8 +85,7 @@ def get_data():
 # API: Wetterdaten empfangen und speichern
 @app.route('/api/data', methods=['POST'])
 def receive_data():
-    if request.headers.get("X-API-KEY") != API_KEY:
-        return jsonify({"error": "Unauthorized"}), 403
+
     data = request.get_json()
     if not data:
         return jsonify({"error": "Keine Daten empfangen"}), 400
@@ -132,8 +130,7 @@ def receive_data():
 
 @app.route('/api/filter-options')
 def get_filter_options():
-    if request.headers.get("X-API-KEY") != API_KEY:
-        return jsonify({"error": "Unauthorized"}), 403
+
     drinnen_filter = request.args.get('drinnen')  # 0 = Draußen, 1 = Drinnen
     ort_filter = request.args.get('standort')  # Gewählter Standort
 
