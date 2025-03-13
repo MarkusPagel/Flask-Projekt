@@ -127,33 +127,15 @@ async function updateData() {
     updateCharts(data);
 }
 
-function updateChart(label, chartId, type, labels, data, color) {
-    console.log(`Update Chart: ${chartId}`);
-    const canvas = document.getElementById(chartId);
-    if (!canvas) {
-        console.warn(`Canvas mit ID '${chartId}' nicht gefunden!`);
-        return;
-    }
-    const ctx = canvas.getContext('2d');
-    if (!window[chartId]) {
-        window[chartId] = new Chart(ctx, {
-            type: type,
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: label,
-                    data: data,
-                    backgroundColor: color + '0.2',
-                    borderColor: color,
-                    borderWidth: 2
-                }]
-            }
-        });
-    } else if (window[chartId].data) {
-        window[chartId].data.labels = labels;
-        window[chartId].data.datasets[0].data = data;
-        window[chartId].update();
-    } else {
-        console.warn(`Chart-Objekt für '${chartId}' nicht korrekt initialisiert.`);
-    }
+function updateCharts(data) {
+    const labels = data.map(entry => entry.uhrzeit);
+    const temperatures = data.map(entry => entry.temperatur);
+    const humidities = data.map(entry => entry.luftfeuchte);
+    const pressures = data.map(entry => entry.pressure);
+    const gasLevels = data.map(entry => entry.gas);
+
+    updateChart('Temperaturverlauf (°C)', 'chart-temperatur', 'line', labels, temperatures, 'rgba(255, 99, 132, 1)');
+    updateChart('Luftfeuchtigkeit (%)', 'chart-luftfeuchte', 'bar', labels, humidities, 'rgba(54, 162, 235, 1)');
+    updateChart('Luftdruck (hPa)', 'chart-luftdruck', 'line', labels, pressures, 'rgba(255, 206, 86, 1)');
+    updateChart('Luftqualität (ppm)', 'chart-luftqualitaet', 'bar', labels, gasLevels, 'rgba(75, 192, 192, 1)');
 }
