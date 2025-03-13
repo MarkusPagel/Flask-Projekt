@@ -67,6 +67,7 @@ async function updateDateFilter() {
 
 // Diese Funktion ruft die Messdaten für das gewählte Datum von der API ab und aktualisiert die Tabelle sowie die Diagramme
 async function updateData() {
+    console.log("Daten geladen"):
     const datumFilter = document.getElementById('datum-select').value;
     const response = await fetch(`/api/data?datum=${datumFilter}`);
     const data = await response.json();
@@ -112,8 +113,5 @@ function updateCharts(data) {
         }
     });
 }
-datumSelect.addEventListener('change', () => {
-    console.log("Datum wurde geändert, updateData() wird aufgerufen.");
-    updateData();
-});
+
 
