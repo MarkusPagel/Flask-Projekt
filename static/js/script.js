@@ -101,38 +101,47 @@ function updateCharts(data) {
         { id: 'chart-luftqualitaet', label: 'Luftqualität (ppm)', data: data.map(e => e.gas), type: 'bar', color: 'rgba(75, 192, 192, 1)' }
     ];
 
-    chartConfigs.forEach(({ id, label, data, type, color }) => {
-        // ❌ Fehler: Uhrzeiten fehlen → Fix: Uhrzeiten als Strings erzwingen
-        const labels = data.map(e => e.uhrzeit);
-        console.log(`Labels für ${id}:`, labels); // Debugging: Zeigt alle Labels in der Konsole an
+    // ❌ Fehler vorher: `data` enthält nur noch Zahlenwerte (z. B. Temperatur), aber keine `uhrzeit`
+    const labels = data.map(e => e.uhrzeit); // ✅ Richtiger Zugriff auf die Uhrzeit!
 
-        if (!charts[id]) {
-            charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
-                type: type,
-                data: {
-                    labels: labels, // ✅ Echte Uhrzeiten auf der X-Achse
-                    datasets: [{ label, data, backgroundColor: color, borderColor: color, borderWidth: 2 }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            ticks: {
-                                autoSkip: false,  // ❌ Kein Entfernen von Labels!
-                                maxRotation: 60,  // 🔄 Labels leicht drehen
-                                minRotation: 30,
-                                font: { size: 10 }
-                            }
+    chartConfigs.forEach(({ id, label, data, type, color }) => {
+        if (charts[id]) {
+            charts[id].destroy();
+        }
+
+        const ctx = document.getElementById(id)?.getContext('2d');
+        if (!ctx) {
+            console.error(`Canvas-Element mit ID ${id} nicht gefunden!`);
+            return;
+        }
+
+        charts[id] = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels, // ✅ Jetzt korrekte Labels verwenden!
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: color,
+                    borderColor: color,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 60,
+                            minRotation: 30,
+                            font: { size: 10 }
                         }
                     }
                 }
-            });
-        } else {
-            charts[id].data.labels = labels; // ✅ Update der Labels mit echten Uhrzeiten
-            charts[id].data.datasets[0].data = data;
-            charts[id].update();
-        }
+            }
+        });
     });
 }
 
