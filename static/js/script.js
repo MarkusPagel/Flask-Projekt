@@ -89,13 +89,11 @@ async function updateData() {
 
 // Ein Objekt zur Speicherung aller Diagramme, um unnötige Neugenerierung zu vermeiden
 let charts = {};
-function updateCharts(data) {
-    console.log("Empfangene Daten für Diagramme:", data); // Debugging
-    console.log("Empfangene Daten für Diagramme:", data);
-console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
-console.log("Temperaturwerte:", data.map(e => e.temperatur));
 
-    
+function updateCharts(data) {
+    console.log("Empfangene Daten für Diagramme:", data);
+    console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
+
     const chartConfigs = [
         { id: 'chart-temperatur', label: 'Temperatur (°C)', data: data.map(e => e.temperatur), type: 'line', color: 'rgba(255, 99, 132, 1)' },
         { id: 'chart-luftfeuchte', label: 'Luftfeuchtigkeit (%)', data: data.map(e => e.luftfeuchte), type: 'bar', color: 'rgba(54, 162, 235, 1)' },
@@ -104,20 +102,37 @@ console.log("Temperaturwerte:", data.map(e => e.temperatur));
     ];
 
     chartConfigs.forEach(({ id, label, data, type, color }) => {
-        const labels = data.map(e => e.uhrzeit);
+        // ❌ Fehler: Uhrzeiten fehlen → Fix: Uhrzeiten als Strings erzwingen
+        const labels = data.map(e => String(e.uhrzeit).trim());
+        console.log(`Labels für ${id}:`, labels); // Debugging: Zeigt alle Labels in der Konsole an
 
         if (!charts[id]) {
             charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
                 type: type,
                 data: {
-                    labels: labels, // ✅ Korrigierte X-Achsen-Beschriftung
+                    labels: labels, // ✅ Echte Uhrzeiten auf der X-Achse
                     datasets: [{ label, data, backgroundColor: color, borderColor: color, borderWidth: 2 }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false,  // ❌ Kein Entfernen von Labels!
+                                maxRotation: 60,  // 🔄 Labels leicht drehen
+                                minRotation: 30,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
                 }
             });
         } else {
-            charts[id].data.labels = labels;
+            charts[id].data.labels = labels; // ✅ Update der Labels mit echten Uhrzeiten
             charts[id].data.datasets[0].data = data;
             charts[id].update();
         }
     });
 }
+
