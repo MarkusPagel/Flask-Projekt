@@ -112,3 +112,8 @@ function updateCharts(data) {
         }
     });
 }
+datumSelect.addEventListener('change', () => {
+    console.log("Datum wurde geändert, updateData() wird aufgerufen.");
+    updateData();
+});
+
