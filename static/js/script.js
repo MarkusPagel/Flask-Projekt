@@ -89,13 +89,13 @@ async function updateData() {
 
 // Ein Objekt zur Speicherung aller Diagramme, um unnötige Neugenerierung zu vermeiden
 let charts = {};
-
-let charts = {};
-
 function updateCharts(data) {
+    console.log("Empfangene Daten für Diagramme:", data); // Debugging
     console.log("Empfangene Daten für Diagramme:", data);
-    console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
+console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
+console.log("Temperaturwerte:", data.map(e => e.temperatur));
 
+    
     const chartConfigs = [
         { id: 'chart-temperatur', label: 'Temperatur (°C)', data: data.map(e => e.temperatur), type: 'line', color: 'rgba(255, 99, 132, 1)' },
         { id: 'chart-luftfeuchte', label: 'Luftfeuchtigkeit (%)', data: data.map(e => e.luftfeuchte), type: 'bar', color: 'rgba(54, 162, 235, 1)' },
@@ -105,54 +105,19 @@ function updateCharts(data) {
 
     chartConfigs.forEach(({ id, label, data, type, color }) => {
         const labels = data.map(e => e.uhrzeit);
-        console.log(`Labels für ${id}:`, labels); // Debugging
 
-        // Falls der alte Chart existiert, vorher zerstören
-        if (charts[id]) {
-            charts[id].destroy();
-        }
-
-        const ctx = document.getElementById(id)?.getContext('2d');
-        if (!ctx) {
-            console.error(`Canvas-Element mit ID ${id} nicht gefunden!`);
-            return;
-        }
-
-        charts[id] = new Chart(ctx, {
-            type: type,
-            data: {
-                labels: labels, // ✅ Erzwingt Uhrzeiten auf der X-Achse
-                datasets: [{
-                    label: label,
-                    data: data,
-                    backgroundColor: color,
-                    borderColor: color,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // ⚠️ Falls Chart.js den Platz begrenzt
-                scales: {
-                    x: {
-                        ticks: {
-                            autoSkip: false, // ❌ Chart.js soll keine Labels verstecken
-                            maxRotation: 90, // 🔄 Dreht Labels stärker
-                            minRotation: 45,
-                            font: { size: 10 }, // 🔥 Kleinere Schrift für mehr Platz
-                        }
-                    }
-                },
-                plugins: {
-                    legend: { display: true },
-                    tooltip: { enabled: true }
+        if (!charts[id]) {
+            charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
+                type: type,
+                data: {
+                    labels: labels, // ✅ Korrigierte X-Achsen-Beschriftung
+                    datasets: [{ label, data, backgroundColor: color, borderColor: color, borderWidth: 2 }]
                 }
-            }
-        });
+            });
+        } else {
+            charts[id].data.labels = labels;
+            charts[id].data.datasets[0].data = data;
+            charts[id].update();
+        }
     });
 }
-
-
-
-
-
