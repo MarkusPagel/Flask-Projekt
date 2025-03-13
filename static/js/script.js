@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const standortSelect = document.getElementById('standort-select');
     const datumSelect = document.getElementById('datum-select');
 
-    // 🟢 Fehler vermeiden: Prüfen, ob alle Buttons existieren
     if (tableButton) {
         tableButton.addEventListener('click', () => {
             graphContainer.style.display = 'none';
@@ -23,18 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (chartButton) {
         chartButton.addEventListener('click', () => {
             console.log("Diagramm-Button wurde geklickt!");
-
-            // 🟢 Sicherstellen, dass das Diagramm sichtbar wird
             graphContainer.style.display = 'grid';
             tableContainer.style.display = 'none';
-
-            updateData(); // API-Daten für Diagramm & Tabelle laden
+            updateData();
         });
     } else {
         console.warn("Diagramm-Button nicht gefunden!");
     }
 
-    // 🟢 Event-Listener für Dropdowns setzen
     if (modeSelect && standortSelect && datumSelect) {
         modeSelect.addEventListener('change', updateDateFilter);
         standortSelect.addEventListener('change', updateDateFilter);
@@ -43,23 +38,18 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Dropdowns nicht gefunden!");
     }
 
-    // 🟢 Beim Laden alle Orte abrufen
     loadAllOrte();
 });
 
-// 🟢 Alle Orte von Anfang an abrufen
 async function loadAllOrte() {
     console.log("Lade alle Orte...");
-
     const standortSelect = document.getElementById('standort-select');
     
-    // 🟢 API-Key im Header hinzufügen
     const response = await fetch('/api/filter-options', {
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
     });
     const data = await response.json();
-
     console.log("Antwort von /api/filter-options:", data);
 
     standortSelect.innerHTML = '';
@@ -70,35 +60,26 @@ async function loadAllOrte() {
         standortSelect.appendChild(option);
     });
 
-    // Nach dem Laden der Orte: Filter für das Datum aktualisieren
     updateDateFilter();
 }
 
-// 🟢 Datum basierend auf Drinnen/Draußen & Ort filtern → Danach automatisch das neue Datum setzen!
 async function updateDateFilter() {
     console.log("Filter aktualisieren...");
-
     const drinnen = document.getElementById('mode-select').value;
     const standort = document.getElementById('standort-select').value;
     const datumSelect = document.getElementById('datum-select');
-
     let url = `/api/filter-options`;
     if (drinnen || standort) {
         url += `?drinnen=${drinnen}&standort=${standort}`;
     }
-
     console.log("Gesendete URL:", url);
-
-    // 🟢 API-Key im Header hinzufügen
+    
     const response = await fetch(url, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
     });
     const data = await response.json();
-
     console.log("Gefilterte Daten:", data);
-
-    // 🟢 Datum-Dropdown vorher komplett leeren
     datumSelect.innerHTML = '';
 
     if (data.daten.length === 0) {
@@ -110,36 +91,26 @@ async function updateDateFilter() {
             option.textContent = datum;
             datumSelect.appendChild(option);
         });
-
-        // Falls nur ein Datum existiert → Automatisch setzen & Daten neu laden
         datumSelect.value = data.daten[0];
-        updateData(); // Direkt neue Daten laden (Tabelle + Diagramm)
+        updateData();
     }
 }
 
-// 🟢 API-Daten abrufen & in Tabelle/Diagramm einfügen
 async function updateData() {
     console.log("Lade Daten für Tabelle & Diagramm...");
-
     const datumFilter = document.getElementById('datum-select').value;
     let url = '/api/data';
-
     if (datumFilter) {
         url += `?datum=${datumFilter}`;
     }
-
-    // 🟢 API-Key im Header hinzufügen
     const response = await fetch(url, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'}
     });
     const data = await response.json();
-
     console.log("API-Daten:", data);
-
     const tableBody = document.getElementById('table-body');
-    tableBody.innerHTML = ''; // Vorherige Einträge löschen
-
+    tableBody.innerHTML = '';
     data.forEach(entry => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -153,13 +124,10 @@ async function updateData() {
         `;
         tableBody.appendChild(row);
     });
-
-    // 🟢 Chart.js Diagramme aktualisieren
     updateCharts(data);
 }
 
-// Globale Variablen für die Charts
-let chart1, chart2, chart3, chart4;
+let chartTemperatur, chartLuftfeuchte, chartLuftdruck, chartLuftqualitaet;
 
 function updateCharts(data) {
     const labels = data.map(entry => entry.uhrzeit);
@@ -168,93 +136,31 @@ function updateCharts(data) {
     const pressures = data.map(entry => entry.pressure);
     const gasLevels = data.map(entry => entry.gas);
 
-    // Falls Diagramme noch nicht existieren, erstelle sie
-    if (!chart1) {
-        const ctx1 = document.getElementById('myChart1').getContext('2d');
-        chart1 = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperatur (°C)',
-                    data: temperatures,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    pointBackgroundColor: 'rgba(255, 99, 132, 1)'
-                }]
-            }
-        });
-    } else {
-        // Falls das Diagramm schon existiert, nur die Daten aktualisieren
-        chart1.data.labels = labels;
-        chart1.data.datasets[0].data = temperatures;
-        chart1.update();
-    }
+    updateChart('Temperaturverlauf (°C)', 'chartTemperatur', 'line', labels, temperatures, 'rgba(255, 99, 132, 1)');
+    updateChart('Luftfeuchtigkeit (%)', 'chartLuftfeuchte', 'bar', labels, humidities, 'rgba(54, 162, 235, 1)');
+    updateChart('Luftdruck (hPa)', 'chartLuftdruck', 'line', labels, pressures, 'rgba(255, 206, 86, 1)');
+    updateChart('Luftqualität (ppm)', 'chartLuftqualitaet', 'bar', labels, gasLevels, 'rgba(75, 192, 192, 1)');
+}
 
-    if (!chart2) {
-        const ctx2 = document.getElementById('myChart2').getContext('2d');
-        chart2 = new Chart(ctx2, {
-            type: 'bar',
+function updateChart(label, chartId, type, labels, data, color) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+    if (!window[chartId]) {
+        window[chartId] = new Chart(ctx, {
+            type: type,
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Luftfeuchte (%)',
-                    data: humidities,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    label: label,
+                    data: data,
+                    backgroundColor: color + '0.2',
+                    borderColor: color,
                     borderWidth: 2
                 }]
             }
         });
     } else {
-        chart2.data.labels = labels;
-        chart2.data.datasets[0].data = humidities;
-        chart2.update();
-    }
-
-    if (!chart3) {
-        const ctx3 = document.getElementById('myChart3').getContext('2d');
-        chart3 = new Chart(ctx3, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Luftdruck (hPa)',
-                    data: pressures,
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    pointBackgroundColor: 'rgba(255, 206, 86, 1)'
-                }]
-            }
-        });
-    } else {
-        chart3.data.labels = labels;
-        chart3.data.datasets[0].data = pressures;
-        chart3.update();
-    }
-
-    if (!chart4) {
-        const ctx4 = document.getElementById('myChart4').getContext('2d');
-        chart4 = new Chart(ctx4, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Luftqualität (ppm)',
-                    data: gasLevels,
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
-                }]
-            }
-        });
-    } else {
-        chart4.data.labels = labels;
-        chart4.data.datasets[0].data = gasLevels;
-        chart4.update();
+        window[chartId].data.labels = labels;
+        window[chartId].data.datasets[0].data = data;
+        window[chartId].update();
     }
 }
