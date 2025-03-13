@@ -102,12 +102,12 @@ function updateCharts(data) {
             charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
                 type: type,
                 data: {
-                    labels: data.map((_, i) => i + 1),
+                    labels: data.map(e => e.uhrzeit), // 🚀 Hier echte Uhrzeit nutzen!
                     datasets: [{ label, data, backgroundColor: color, borderColor: color, borderWidth: 2 }]
                 }
             });
         } else {
-            charts[id].data.labels = data.map((_, i) => i + 1);
+            charts[id].data.labels = data.map(e => e.uhrzeit); // 🚀 Auch hier Uhrzeit nutzen!
             charts[id].data.datasets[0].data = data;
             charts[id].update();
         }
