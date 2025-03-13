@@ -1,3 +1,4 @@
+// Sicherstellen, dass das Skript erst nach vollständigem Laden des DOMs ausgeführt wird
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Script.js wurde geladen!");
 
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAllOrte();
 });
 
+// Diese Funktion lädt alle verfügbaren Orte von der API und aktualisiert das Dropdown-Menü
 async function loadAllOrte() {
     const standortSelect = document.getElementById('standort-select');
     const response = await fetch('/api/filter-options');
@@ -43,6 +45,7 @@ async function loadAllOrte() {
     updateDateFilter();
 }
 
+// Hier wird das Datum basierend auf den gewählten Filtern aktualisiert und neue Daten geladen
 async function updateDateFilter() {
     const drinnen = document.getElementById('mode-select').value;
     const standort = document.getElementById('standort-select').value;
@@ -62,6 +65,7 @@ async function updateDateFilter() {
     }
 }
 
+// Diese Funktion ruft die Messdaten für das gewählte Datum von der API ab und aktualisiert die Tabelle sowie die Diagramme
 async function updateData() {
     const datumFilter = document.getElementById('datum-select').value;
     const response = await fetch(`/api/data?datum=${datumFilter}`);
@@ -82,6 +86,7 @@ async function updateData() {
     updateCharts(data);
 }
 
+// Ein Objekt zur Speicherung aller Diagramme, um unnötige Neugenerierung zu vermeiden
 let charts = {};
 function updateCharts(data) {
     const chartConfigs = [
