@@ -90,6 +90,8 @@ async function updateData() {
 // Ein Objekt zur Speicherung aller Diagramme, um unnötige Neugenerierung zu vermeiden
 let charts = {};
 function updateCharts(data) {
+    console.log("Empfangene Daten für Diagramme:", data); // Debugging
+    
     const chartConfigs = [
         { id: 'chart-temperatur', label: 'Temperatur (°C)', data: data.map(e => e.temperatur), type: 'line', color: 'rgba(255, 99, 132, 1)' },
         { id: 'chart-luftfeuchte', label: 'Luftfeuchtigkeit (%)', data: data.map(e => e.luftfeuchte), type: 'bar', color: 'rgba(54, 162, 235, 1)' },
@@ -98,20 +100,23 @@ function updateCharts(data) {
     ];
 
     chartConfigs.forEach(({ id, label, data, type, color }) => {
+        const labels = data.map(e => e.uhrzeit);
+
         if (!charts[id]) {
             charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
                 type: type,
                 data: {
-                    labels: data.map(e => e.uhrzeit), // 🚀 Hier echte Uhrzeit nutzen!
+                    labels: labels, // ✅ Korrigierte X-Achsen-Beschriftung
                     datasets: [{ label, data, backgroundColor: color, borderColor: color, borderWidth: 2 }]
                 }
             });
         } else {
-            charts[id].data.labels = data.map(e => e.uhrzeit); // 🚀 Auch hier Uhrzeit nutzen!
+            charts[id].data.labels = labels;
             charts[id].data.datasets[0].data = data;
             charts[id].update();
         }
     });
 }
+
 
 
