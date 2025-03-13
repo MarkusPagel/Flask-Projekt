@@ -103,7 +103,7 @@ function updateCharts(data) {
 
     chartConfigs.forEach(({ id, label, data, type, color }) => {
         // ❌ Fehler: Uhrzeiten fehlen → Fix: Uhrzeiten als Strings erzwingen
-        const labels = data.map(e => String(e.uhrzeit).trim());
+        const labels = data.map(e => e.uhrzeit));
         console.log(`Labels für ${id}:`, labels); // Debugging: Zeigt alle Labels in der Konsole an
 
         if (!charts[id]) {
