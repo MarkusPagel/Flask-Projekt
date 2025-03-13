@@ -89,13 +89,12 @@ async function updateData() {
 
 // Ein Objekt zur Speicherung aller Diagramme, um unnötige Neugenerierung zu vermeiden
 let charts = {};
-function updateCharts(data) {
-    console.log("Empfangene Daten für Diagramme:", data); // Debugging
-    console.log("Empfangene Daten für Diagramme:", data);
-console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
-console.log("Temperaturwerte:", data.map(e => e.temperatur));
 
-    
+function updateCharts(data) {
+    console.log("Empfangene Daten für Diagramme:", data);
+    console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
+    console.log("Temperaturwerte:", data.map(e => e.temperatur));
+
     const chartConfigs = [
         { id: 'chart-temperatur', label: 'Temperatur (°C)', data: data.map(e => e.temperatur), type: 'line', color: 'rgba(255, 99, 132, 1)' },
         { id: 'chart-luftfeuchte', label: 'Luftfeuchtigkeit (%)', data: data.map(e => e.luftfeuchte), type: 'bar', color: 'rgba(54, 162, 235, 1)' },
@@ -106,21 +105,46 @@ console.log("Temperaturwerte:", data.map(e => e.temperatur));
     chartConfigs.forEach(({ id, label, data, type, color }) => {
         const labels = data.map(e => e.uhrzeit);
 
-        if (!charts[id]) {
-            charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
-                type: type,
-                data: {
-                    labels: labels, // ✅ Korrigierte X-Achsen-Beschriftung
-                    datasets: [{ label, data, backgroundColor: color, borderColor: color, borderWidth: 2 }]
-                }
-            });
-        } else {
-            charts[id].data.labels = labels;
-            charts[id].data.datasets[0].data = data;
-            charts[id].update();
+        // Falls der alte Chart existiert, vorher zerstören, um Flackern zu verhindern
+        if (charts[id]) {
+            charts[id].destroy();
         }
+
+        const ctx = document.getElementById(id)?.getContext('2d');
+        if (!ctx) {
+            console.error(`Canvas-Element mit ID ${id} nicht gefunden!`);
+            return;
+        }
+
+        charts[id] = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels, // ✅ Echte Uhrzeiten als X-Achse
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: color,
+                    borderColor: color,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: false,  // ❌ Kein automatisches Entfernen von Labels!
+                            maxRotation: 60,  // 🔄 Leichte Drehung für bessere Lesbarkeit
+                            minRotation: 30,
+                            font: { size: 10 } // 🔥 Kleinere Schrift, damit alles passt
+                        }
+                    }
+                }
+            }
+        });
     });
 }
+
 
 
 
