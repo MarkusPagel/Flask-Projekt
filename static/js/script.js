@@ -91,6 +91,10 @@ async function updateData() {
 let charts = {};
 function updateCharts(data) {
     console.log("Empfangene Daten für Diagramme:", data); // Debugging
+    console.log("Empfangene Daten für Diagramme:", data);
+console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
+console.log("Temperaturwerte:", data.map(e => e.temperatur));
+
     
     const chartConfigs = [
         { id: 'chart-temperatur', label: 'Temperatur (°C)', data: data.map(e => e.temperatur), type: 'line', color: 'rgba(255, 99, 132, 1)' },
