@@ -139,3 +139,32 @@ function updateCharts(data) {
     updateChart('Luftdruck (hPa)', 'chart-luftdruck', 'line', labels, pressures, 'rgba(255, 206, 86, 1)');
     updateChart('Luftqualität (ppm)', 'chart-luftqualitaet', 'bar', labels, gasLevels, 'rgba(75, 192, 192, 1)');
 }
+
+function updateChart(label, chartId, type, labels, data, color) {
+    console.log(`Update Chart: ${chartId}`);
+    const canvas = document.getElementById(chartId);
+    if (!canvas) {
+        console.warn(`Canvas mit ID '${chartId}' nicht gefunden!`);
+        return;
+    }
+    const ctx = canvas.getContext('2d');
+    if (!window[chartId]) {
+        window[chartId] = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: color + '0.2',
+                    borderColor: color,
+                    borderWidth: 2
+                }]
+            }
+        });
+    } else {
+        window[chartId].data.labels = labels;
+        window[chartId].data.datasets[0].data = data;
+        window[chartId].update();
+    }
+}
