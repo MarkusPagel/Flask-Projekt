@@ -90,10 +90,11 @@ async function updateData() {
 // Ein Objekt zur Speicherung aller Diagramme, um unnötige Neugenerierung zu vermeiden
 let charts = {};
 
+let charts = {};
+
 function updateCharts(data) {
     console.log("Empfangene Daten für Diagramme:", data);
     console.log("Labels (Uhrzeiten):", data.map(e => e.uhrzeit));
-    console.log("Temperaturwerte:", data.map(e => e.temperatur));
 
     const chartConfigs = [
         { id: 'chart-temperatur', label: 'Temperatur (°C)', data: data.map(e => e.temperatur), type: 'line', color: 'rgba(255, 99, 132, 1)' },
@@ -104,8 +105,9 @@ function updateCharts(data) {
 
     chartConfigs.forEach(({ id, label, data, type, color }) => {
         const labels = data.map(e => e.uhrzeit);
+        console.log(`Labels für ${id}:`, labels); // Debugging
 
-        // Falls der alte Chart existiert, vorher zerstören, um Flackern zu verhindern
+        // Falls der alte Chart existiert, vorher zerstören
         if (charts[id]) {
             charts[id].destroy();
         }
@@ -119,7 +121,7 @@ function updateCharts(data) {
         charts[id] = new Chart(ctx, {
             type: type,
             data: {
-                labels: labels, // ✅ Echte Uhrzeiten als X-Achse
+                labels: labels, // ✅ Erzwingt Uhrzeiten auf der X-Achse
                 datasets: [{
                     label: label,
                     data: data,
@@ -130,20 +132,26 @@ function updateCharts(data) {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false, // ⚠️ Falls Chart.js den Platz begrenzt
                 scales: {
                     x: {
                         ticks: {
-                            autoSkip: false,  // ❌ Kein automatisches Entfernen von Labels!
-                            maxRotation: 60,  // 🔄 Leichte Drehung für bessere Lesbarkeit
-                            minRotation: 30,
-                            font: { size: 10 } // 🔥 Kleinere Schrift, damit alles passt
+                            autoSkip: false, // ❌ Chart.js soll keine Labels verstecken
+                            maxRotation: 90, // 🔄 Dreht Labels stärker
+                            minRotation: 45,
+                            font: { size: 10 }, // 🔥 Kleinere Schrift für mehr Platz
                         }
                     }
+                },
+                plugins: {
+                    legend: { display: true },
+                    tooltip: { enabled: true }
                 }
             }
         });
     });
 }
+
 
 
 
